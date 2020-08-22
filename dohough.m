@@ -18,11 +18,14 @@ fascicle = edge(fascicle);
 [hmat,theta,rho] = hough(fascicle,'RhoResolution',parms.rhores,'Theta',parms.angles);
 
 % find largest hmat value for each theta (i.e. each column)
-hmax = maxk(hmat,1);
-[hnmax,maxid] = maxk(hmax,parms.npeaks);
+hmax = nan(1,size(hmat,2));
+for i = 1:size(hmat,2)
+    hmax(i) = max(hmat(:,i));
+end
+[hnmax,maxid] = sort(hmax,'descend');
 
 % weighted average
-theta_wa = dot(theta(maxid), hnmax) / sum(hnmax);
+theta_wa = dot(theta(maxid(1:parms.npeaks)), hnmax(1:parms.npeaks)) / sum(hnmax(1:parms.npeaks));
 alpha = 90 - theta_wa; % because hough is relative to vertical and we want relative to horizontal
 
 % find lines
