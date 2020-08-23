@@ -14,4 +14,8 @@ This respository includes code that can be used to estimate muscle fascicle leng
 
 **cut_apo**: cuts the actual ultrasound image out of the original image (the latter includes a black frame). This would not be neccesary if the ultrasound image takes up the entire original image
 
-for questions: tim.vanderzee@ucalgary.ca
+Tested for MATLAB versions:
+- 2016a
+- 2019a
+
+For questions, email to tim.vanderzee@ucalgary.ca
