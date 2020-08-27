@@ -10,7 +10,7 @@ apo_thres = imbinarize(aponeurosis);
 
 % keep to the top 40%
 [m,~] = size(apo_thres);
-apo_thres(cut(1)*m:end,:) = 0;  
+apo_thres(round(cut(1)*m):end,:) = 0;  
 
 % only consider objects with certain angle
 apo_super_filt = bwpropfilt(apo_thres,'orientation', parms.superrange);

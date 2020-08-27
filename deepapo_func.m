@@ -14,8 +14,7 @@ apo_ori_filt = bwpropfilt(apo_thres,'orientation', parms.deeprange);
 % region selection
 [m,~] = size(apo_ori_filt);
 apo_deep = apo_ori_filt;
-apo_deep(1:(1-cut(1))*m,:) = 0;
-apo_deep((1-cut(2))*m:end,:) = 0;
+apo_deep(1:round((1-cut(1))*m),:) = 0;
 
 % find largest object
 deep_obj2 = bwpropfilt(apo_deep,'MajorAxisLength',2);

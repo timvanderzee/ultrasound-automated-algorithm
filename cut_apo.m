@@ -1,4 +1,4 @@
-function[aponeurosis_cutted] = cut_apo(data,aponeurosis)
+function[aponeurosis_cutted, verts, horis] = cut_apo(data,aponeurosis)
 aponeurosis_cutted = aponeurosis;
 
 %% horizontal lines
@@ -29,10 +29,15 @@ vert(1) = max(vert);
 vert(2) = 670;
 end
 
+% sorting
+horis = sort(hori);
+verts = sort(vert);
+
 % do cutting
-aponeurosis_cutted(1:min(hori)+20,:) = 0;
-aponeurosis_cutted(max(hori)-20:end,:) = 0;
-aponeurosis_cutted(:,1:min(vert)+30) = 0;
-aponeurosis_cutted(:,max(vert)-30:end) = 0;
+aponeurosis_cutted(1:horis(1)+20,:) = 0;
+aponeurosis_cutted(horis(end)-20:end,:) = 0;
+aponeurosis_cutted(:,1:verts(1)+30) = 0;
+aponeurosis_cutted(:,verts(end)-30:end) = 0;
+
 
 end
