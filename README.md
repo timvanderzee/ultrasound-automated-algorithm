@@ -23,4 +23,7 @@ In addition, it has been used to estimate muscle work and its associated energet
 
 **cut_apo**: cuts the actual ultrasound image out of the original image (the latter includes a black frame). This would not be neccesary if the ultrasound image takes up the entire original image
 
+## Additional scripts
+**ComputeAndDisplayHoughTransformExample**: adapted version of MATLABs example for using their hough transform function on a build-in image ('gantrycrane.png') (see: https://www.mathworks.com/help/images/ref/hough.html). Adapted to allow for visualizing lines and playing with the npeaks parameter that sets the amount of extracted lines. 
+
 For questions, please email me: tim.vanderzee@ucalgary.ca
