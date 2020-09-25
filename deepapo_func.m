@@ -22,7 +22,7 @@ deep_simple = nan(size(parms.apox));
 apo_thres = imbinarize(aponeurosis);
 
 % select region
-apo_thres(1:round((1-parms.cut(1))*n),:) = 0;
+apo_thres(1:round((1-parms.cut(2))*n),:) = 0;
 
 % filter for angles
 apo_deep = bwpropfilt(apo_thres,'orientation', parms.deeprange);
