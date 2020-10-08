@@ -27,7 +27,7 @@ In addition, it has been used to estimate muscle work and its associated energet
 * Investigator: Paolo Tecchio
 * Format: .png
 
-**example_ultrasound_image2.png**: 
+**example_ultrasound_image3.png**: 
 * Muscle: Gastrocnemius Medialis
 * Ultrasound device: Telemed LVD8-4L65S-3
 * Facility: University of Verona, Italy
