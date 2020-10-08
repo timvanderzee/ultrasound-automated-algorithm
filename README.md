@@ -1,4 +1,4 @@
-# Ultrasound_automated_algorithm
+# Ultrasound-automated-algorithm
 
 This respository includes code that can be used to estimate muscle fascicle lengths and pennation angles from muscle ultrasound images. The algorithm uses a combination of Frangi filtering, Hough transform and feature detection. 
 
@@ -11,6 +11,28 @@ In addition, it has been used to estimate muscle work and its associated energet
 **Recommended**: run the MATLAB live script called *example_live.mlx*. This live script allows you to update parameter values and investigate their effect on the outcome
 
 **Alternative**: if you don't have the option to run MATLAB live scripts (e.g. old MATLAB version), you can run the 'classic' MATLAB script called *example.m*. This function calls the same functions as *example_live.mlx* (listed below), but does not provide the option to adjust parameters (instead, it uses the parameters stored in *parms.mat*)
+## Images
+
+**example_ultrasound_image.mat**: 
+* Muscle: Vastus Lateralis
+* Ultrasound device: General Electric Logiq E9
+* Facility: University of Calgary, Canada
+* Investigator: Tim van der Zee
+* Format: .mat
+
+**example_ultrasound_image2.png**: 
+* Muscle: Vastus Lateralis
+* Ultrasound device: Telemed LVD8-4L65S-3
+* Facility: University of Verona, Italy
+* Investigator: Paolo Tecchio
+* Format: .png
+
+**example_ultrasound_image2.png**: 
+* Muscle: Gastrocnemius Medialis
+* Ultrasound device: Telemed LVD8-4L65S-3
+* Facility: University of Verona, Italy
+* Investigator: Paolo Tecchio
+* Format: .png
 
 ## Functions
 **Frangi filter folder**: contains Frangi filter functions created by Dirk-Jan Kroon (https://www.mathworks.com/matlabcentral/fileexchange/24409-hessian-based-frangi-vesselness-filter)
