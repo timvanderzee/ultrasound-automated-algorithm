@@ -16,14 +16,21 @@ function[alpha, lines_out] = dohough(fascicle,parms)
 
 % Hough transform is done relative to the vertical, but we had things
 % relative to the horizontal
-anglerange = sort(90-parms.range);
+
+if strcmp(parms.houghangles,'default')== 1
+    anglerange = [-90 89];
+else
+    anglerange = sort(90-parms.range);
+end
+
+fasangles = anglerange(1):parms.thetares:anglerange(2);
 
 %% Threshold, cut, edge
 % determine size
 [n,m,~] = size(fascicle);
 
 % thresholding
-fas_thres = imbinarize(fascicle,parms.thres);
+fas_thres = imbinarize(fascicle);
 
 % cutting
 fas_thres(1:(parms.middle-round(n*parms.cut(1))),:) = 0;
@@ -36,7 +43,7 @@ fas_edge = edge(fas_thres);
 
 %% Determine alpha
 % hough transform
-[hmat,theta,rho] = hough(fas_edge,'RhoResolution',parms.rhores,'Theta',anglerange(1):anglerange(2));
+[hmat,theta,rho] = hough(fas_edge,'RhoResolution',parms.rhores,'Theta',fasangles);
 
 % find largest hmat value for each theta (i.e. each column)
 hmax = nan(1,size(hmat,2));

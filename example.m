@@ -26,13 +26,16 @@ end
 
 pixtocm = (522-61)/4;
 [n,m,p] = size(data);
+parms.apo.apox = 1:10:m;
 
 %% Step 1: Frangi filtering
 % aponeurosis
-aponeurosis = FrangiFilter2D(double(rgb2gray(data)), parms.apo.frangi);
+aponeurosis = FrangiFilter2D(graydata, parms.apo.frangi);
 
 % fascicle
-fascicle = FrangiFilter2D(double(rgb2gray(data)), parms.fas.frangi);
+fascicle = FrangiFilter2D(graydata, parms.fas.frangi);
+
+
 %% Step 2: Feature detection
 % Cutting
 if parms.do_cutting
@@ -44,23 +47,27 @@ else
 end
 
 % Aponeurosis
-deep_aponeurosis = deepapo_func(aponeurosis_cutted, parms.apo);
-super_aponeurosis = superapo_func(aponeurosis_cutted, parms.apo);
+deep_aponeurosis = deepapo_func(aponeurosis, parms.apo);
+super_aponeurosis = superapo_func(aponeurosis, parms.apo);
 
 % Fascicle (Hough)
 [alpha, fascicle_lines] = dohough(fascicle,parms.fas);
 
-%% Step 3: Variables extraction
-height = mean(deep_aponeurosis-super_aponeurosis,'omitnan');
+% Plot the fascicle region
+c = parms.fas.cut;
 
-dx = parms.apo.apox(end) - parms.apo.apox(round(n_apo/2));
-dy = super_aponeurosis(:,round(n_apo/2)) - super_aponeurosis(:,end); % negative if downward
-betha = atan2d(dy,dx);  
+
+%% Step 3: Variables extraction
+p = polyfit(parms.apo.apox(isfinite(super_aponeurosis)), super_aponeurosis(isfinite(super_aponeurosis)),1);
+betha = -atan2d(p(1),1); 
+
+height = mean(deep_aponeurosis-super_aponeurosis,'omitnan');
+thickness = height * cosd(betha);
 
 % Pennation angle (phi) and fascicle length
 phi = alpha - betha;
-faslen = height ./ sind(phi);
-faslen_cm = faslen ./ pixtocm;
+faslen_pix = thickness ./ sind(phi);
+faslen = faslen_pix ./ pixtocm;
 
 %% Plot objects
 if show
@@ -86,3 +93,6 @@ title({['Pennation angle: ' , num2str(round(phi,1)), ' deg'], ['Fascicle length:
 end
 end
 
+    plot([m*c(2) m*(1-c(2)) m*(1-c(2)) m*c(2) m*c(2)], ...
+        [parms.fas.middle-(n*c(1)), parms.fas.middle-(n*c(1)) parms.fas.middle+(n*c(1)) parms.fas.middle+(n*c(1)) parms.fas.middle-(n*c(1))] ...
+        ,'--', 'linewidth', 2, 'color', color(2,:))

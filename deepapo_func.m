@@ -21,6 +21,13 @@ deep_simple = nan(size(parms.apox));
 % threshold image
 apo_thres = imbinarize(aponeurosis);
 
+% cut edges
+c = parms.frangi.FrangiScaleRange(2)*2;
+apo_thres(1:c,:) = 0;
+apo_thres(:,1:c) = 0;
+apo_thres((end-c):end,:) = 0;
+apo_thres(:,(end-c):end) = 0;
+
 % select region
 apo_thres(1:round((1-parms.cut(2))*n),:) = 0;
 
@@ -28,18 +35,24 @@ apo_thres(1:round((1-parms.cut(2))*n),:) = 0;
 apo_deep = bwpropfilt(apo_thres,'orientation', parms.deeprange);
 
 % find the two longest objects
-two_longest = bwpropfilt(apo_deep,'MajorAxisLength',2);
+objects = bwconncomp(apo_deep);
+
+if objects.NumObjects>1
+    two_longest = bwpropfilt(apo_deep,'MajorAxisLength',2);
+else
+    two_longest = apo_deep;
+end
 
 %% if 2 long objects, choose the most superficial   
 props = regionprops(two_longest,'MajorAxisLength','Extrema');
 objects = bwconncomp(two_longest);
 
-if ~isempty(props)
+if ~isempty(props) && objects.NumObjects>1
     if  min(props.MajorAxisLength) > (parms.maxlengthratio * max(props.MajorAxisLength))
 
         % location of most superficial extrema
-        miny = nan(1,2);
-        for i = 1:2
+        miny = nan(size(props));
+        for i = 1:size(props,2)
             miny(i) = min(props(i).Extrema(:,2));
         end
         
