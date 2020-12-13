@@ -9,15 +9,14 @@ parms.show = 1;
 
 % Load image
 load('Data\example_ultrasound_image.mat');
+[n,m] = size(data); % data needs to be a n-by-m numeric array
 
-% Convert to grayscale
-graydata = rgb2gray(data);
-
-% Trim the data
-trimdata = graydata(61:521, 112:689);
+apomargin = 100; % distance between start aponeurosis objects and the sides (pixels)
+apospacing = 20; % horizontal spacing for aponeurosis (pixels) 
+parms.apo.apox = apomargin:apospacing:(m-apomargin);
 
 %% Determine alpha, beta, thickness
-[alpha, betha, thickness] = auto_ultrasound(trimdata,parms);
+[alpha, betha, thickness] = auto_ultrasound(data,parms);
 
 %% Determine fascicle length and pennation angle
 pixtocm = 463/4;
