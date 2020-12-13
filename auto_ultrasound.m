@@ -4,10 +4,10 @@ function[alpha, betha, thickness] = auto_ultrasound(data,parms)
 
 %% Step 1: Frangi filtering
 % aponeurosis
-aponeurosis = FrangiFilter2D(data, parms.apo.frangi);
+aponeurosis = FrangiFilter2D(double(data), parms.apo.frangi);
 
 % fascicle
-fascicle = FrangiFilter2D(data, parms.fas.frangi);
+fascicle = FrangiFilter2D(double(data), parms.fas.frangi);
 
 %% Step 2: Feature detection
 % Aponeurosis
@@ -38,11 +38,16 @@ if parms.show
     color = get(gca,'colororder');
     imshow(data,[]);
 
+    % plot region of interest
     line('xdata',[m*c(2) m*(1-c(2)) m*(1-c(2)) m*c(2) m*c(2)], ...
          'ydata',[parms.fas.middle-(n*c(1)), parms.fas.middle-(n*c(1)) parms.fas.middle+(n*c(1)) parms.fas.middle+(n*c(1)) parms.fas.middle-(n*c(1))] ...
         ,'linestyle','--', 'linewidth', 2, 'color', color(2,:))
 
-    line('xdata',parms.apo.apox, 'ydata', deep_aponeurosis,'linewidth',3, 'color', color(6,:))
+    line('xdata', [parms.apo.apox(1) parms.apo.apox(end)] , 'ydata', n.*[parms.apo.cut(1) parms.apo.cut(1)],'linewidth',2, 'linestyle', '--', 'color', color(6,:))
+    line('xdata', [parms.apo.apox(1) parms.apo.apox(end)] , 'ydata', n.*[(1-parms.apo.cut(2)) (1-parms.apo.cut(2))],'linewidth',2, 'linestyle', '--', 'color', color(5,:))
+        
+    % plot identified aponeuroses and fascicle
+    line('xdata',parms.apo.apox, 'ydata', deep_aponeurosis,'linewidth',3, 'color', color(5,:))
     line('xdata',parms.apo.apox, 'ydata', super_aponeurosis,'linewidth',3, 'color', color(6,:));
     line('xdata',[fascicle_lines(1,1) fascicle_lines(1,3)],'ydata',[fascicle_lines(1,2) fascicle_lines(1,4)],'LineWidth',3, 'color', color(2,:))
 drawnow
