@@ -1,4 +1,4 @@
-function[apo_simple] = apo_func(aponeurosis, parms)
+function[apo_simple, betha] = apo_func(aponeurosis, parms)
 
 % This function finds vertical coordinates of the aponeurosis object
 % given the filtered image(aponeurosis) and parameters (parms)
@@ -55,6 +55,9 @@ if props.MajorAxisLength < parms.minlength
     return
 end
     
+%% Determine angle
+objprops = regionprops(apo_obj, 'orientation');
+betha = objprops.Orientation;
 
 %% Find the extremes on the object
 % fill holes
@@ -96,5 +99,6 @@ for i = 1:length(parms.apox)
         all_blackpixels = iapo_objy(iapo_objx == parms.apox(i));
         apo_simple(:,i) = min(all_blackpixels(all_blackpixels>minapo(i)));
     end
-end  
+end 
+
 end

@@ -29,17 +29,30 @@ fasangles = anglerange(1):parms.thetares:anglerange(2);
 % determine size
 [n,m,~] = size(fascicle);
 
+for side = 1:3
 % thresholding
 fas_thres = imbinarize(fascicle);
 
 % cutting
 fas_thres(1:(parms.middle-round(n*parms.cut(1))),:) = 0;
 fas_thres(  (parms.middle+round(n*parms.cut(1))):end,:) = 0;
-fas_thres(:,1:round(m*parms.cut(2))) = 0;
-fas_thres(:, round(m*(1-parms.cut(2))):end,:) = 0;
 
+    if side == 1 % left
+        fas_thres(:,1:round(m/2-2*n*parms.cut(1))) = 0;
+        fas_thres(:,round(m/2):end) = 0;
+        
+    elseif side == 2 % middle
+        fas_thres(:,1:round(m/2-n*parms.cut(1))) = 0;
+        fas_thres(:,round(m/2+n*parms.cut(1)):end) = 0;
+        
+    else % right   
+        fas_thres(:,1:round(m/2)) = 0;
+        fas_thres(:,  round(m/2+2*n*parms.cut(1)):end,:) = 0;
+    end
+    
 % edge detection (not super critical I think)
-fas_edge = edge(fas_thres);
+% fas_edge = edge(fas_thres);
+fas_edge = fas_thres;
 
 %% Determine alpha
 % hough transform
@@ -54,15 +67,22 @@ end
 
 % weighted average
 theta_wa = dot(theta(maxid(1:parms.npeaks)), hnmax(1:parms.npeaks)) / sum(hnmax(1:parms.npeaks));
-alpha = 90 - theta_wa; % because hough is relative to vertical and we want relative to horizontal
+alphas(side) = 90 - theta_wa; % because hough is relative to vertical and we want relative to horizontal
 
 %% Find most frequently occuring line
 P = houghpeaks(hmat,1);
 lines = houghlines(fas_edge,theta,rho,P,'FillGap',1000,'MinLength',1); % Fillgap is arbitrarily large and Minlength is arbitrarily small
-
+for k = 1:length(lines)
+ xy = [lines(k).point1; lines(k).point2];
+ plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
+end
 if ~isempty(lines)
     lines_out = [lines(1).point1 lines(1).point2];
 else
     lines_out = nan(1,4);
 end
+end
+
+alpha = mean(alphas);
+
 end

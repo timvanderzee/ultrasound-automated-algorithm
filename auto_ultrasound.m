@@ -14,7 +14,7 @@ fascicle = FrangiFilter2D(double(data), parms.fas.frangi);
 %% Step 2: Feature detection
 % superficial aponeurosis
 super_filt(round(parms.apo.supercut*n):end,:) = 0;  
-super_aponeurosis = apo_func(super_filt, parms.apo);
+[super_aponeurosis, betha] = apo_func(super_filt, parms.apo);
 
 % deep aponeurosis
 deep_filt(1:round(parms.apo.deepcut*n),:) = 0;  
@@ -28,9 +28,6 @@ parms.fas.middle = round((mean(deep_aponeurosis,'omitnan') + mean(super_aponeuro
 [alpha, fascicle_lines] = dohough(fascicle,parms.fas);
 
 %% Step 3: Variables extraction
-p = polyfit(parms.apo.apox(isfinite(super_aponeurosis)), super_aponeurosis(isfinite(super_aponeurosis)),1);
-betha = -atan2d(p(1),1); 
-
 height = mean(deep_aponeurosis-super_aponeurosis,'omitnan');
 thickness = height * cosd(betha);
 
@@ -39,13 +36,12 @@ thickness = height * cosd(betha);
 c = parms.fas.cut;
 
 if parms.show
-    
-    figure(1)
+   
     color = get(gca,'colororder');
     imshow(data,[]);
 
     % plot region of interest
-    line('xdata',[m*c(2) m*(1-c(2)) m*(1-c(2)) m*c(2) m*c(2)], ...
+    line('xdata',[round(m/2-n*c(1)) round(m/2+n*c(1)) round(m/2+n*c(1)) round(m/2-n*c(1)) round(m/2-n*c(1))], ...
          'ydata',[parms.fas.middle-(n*c(1)), parms.fas.middle-(n*c(1)) parms.fas.middle+(n*c(1)) parms.fas.middle+(n*c(1)) parms.fas.middle-(n*c(1))] ...
         ,'linestyle','--', 'linewidth', 2, 'color', color(2,:))
 
