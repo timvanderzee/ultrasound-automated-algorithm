@@ -12,7 +12,7 @@ In addition, it has been used to estimate muscle work and its associated energet
 **Inputs**
 
 * data: needs to be grayscale (therefore m-by-n numeric array). see: https://www.mathworks.com/help/matlab/ref/rgb2gray.html on how to convert rgb to grayscale
-* parms: struct specifying the parameters used in the algorithm, with fields frangi, fas and apo
+* parms: struct specifying the parameters used in the algorithm, with fields fas and apo
 
 **Outputs**
 
@@ -37,9 +37,7 @@ Both scripts run auto_ultrasound.m on example image(s)
 
 **Aponeurosis**
 
-* *superapo_func.m*: uses feature detection to extract the location of the superficial aponeurosis, which is used to determine muscle thickness and superficial aponeurosis angle
-
-* *deepapo_func.m*: uses feature detection to extract the location of the deep aponeurosis, which is used together with the location fo the superficial aponeurosis to determine muscle thickness 
+* *apo_func.m*: uses feature detection to extract the location of the superficial or deep aponeurosis, which is used to determine muscle thickness and superficial aponeurosis angle
 
 * *cut_apo*: cuts the actual ultrasound image out of the original image (the latter includes a black frame). This would not be neccesary if the ultrasound image takes up the entire original image
 
