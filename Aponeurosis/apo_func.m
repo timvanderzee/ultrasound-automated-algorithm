@@ -15,10 +15,6 @@ function[apo_simple, betha] = apo_func(aponeurosis, parms)
 % define output
 apo_simple = nan(size(parms.apox));
 
-% cut sides
-aponeurosis(:,1:parms.apox(1)) = 0;
-aponeurosis(:,parms.apox(end):end) = 0;
-
 % find the two longest objects
 two_longest = bwpropfilt(aponeurosis, 'Majoraxislength',2);
 

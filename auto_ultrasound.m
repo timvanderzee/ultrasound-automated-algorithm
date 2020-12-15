@@ -5,8 +5,8 @@ function[alpha, betha, thickness] = auto_ultrasound(data,parms)
 %% Step 1: Filtering
 % aponeurosis
 aponeurosis = FrangiFilter2D(double(data), parms.apo.frangi);
-super_filt = bwpropfilt(imbinarize(aponeurosis),'orientation', parms.apo.superrange);
-deep_filt = bwpropfilt(imbinarize(aponeurosis),'orientation', parms.apo.deeprange);
+super_filt = bwpropfilt(imbinarize(aponeurosis(:,parms.apo.apox(1):parms.apo.apox(end))),'orientation', parms.apo.superrange);
+deep_filt = bwpropfilt(imbinarize(aponeurosis(:,parms.apo.apox(1):parms.apo.apox(end))),'orientation', parms.apo.deeprange);
 
 % fascicle
 fascicle = FrangiFilter2D(double(data), parms.fas.frangi);

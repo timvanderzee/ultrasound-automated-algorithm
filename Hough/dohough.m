@@ -72,10 +72,12 @@ alphas(side) = 90 - theta_wa; % because hough is relative to vertical and we wan
 %% Find most frequently occuring line
 P = houghpeaks(hmat,1);
 lines = houghlines(fas_edge,theta,rho,P,'FillGap',1000,'MinLength',1); % Fillgap is arbitrarily large and Minlength is arbitrarily small
-for k = 1:length(lines)
- xy = [lines(k).point1; lines(k).point2];
- plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
-end
+
+% figure;imshow(fascicle); hold on
+% for k = 1:length(lines)
+%  xy = [lines(k).point1; lines(k).point2];
+%  plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
+% end
 if ~isempty(lines)
     lines_out = [lines(1).point1 lines(1).point2];
 else
