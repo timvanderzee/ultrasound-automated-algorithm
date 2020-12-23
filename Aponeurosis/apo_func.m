@@ -1,4 +1,4 @@
-function[apo_simple, betha] = apo_func(aponeurosis, parms)
+function[apo_simple, betha] = apo_func(apo_obj, parms)
 
 % This function finds vertical coordinates of the aponeurosis object
 % given the filtered image(aponeurosis) and parameters (parms)
@@ -14,36 +14,8 @@ function[apo_simple, betha] = apo_func(aponeurosis, parms)
 
 % define output
 apo_simple = nan(size(parms.apox));
-
-% find the two longest objects
-two_longest = bwpropfilt(aponeurosis, 'Majoraxislength',2);
-
-%% Decision: if its NOT a close call, choose the longest, else, choose the deepest
-props = regionprops(two_longest,'Majoraxislength');
-
-% Check wheter it's a close call or not
-if min(props.MajorAxisLength) < (parms.maxlengthratio * max(props.MajorAxisLength))
-    apo_obj = bwareafilt(two_longest,1); % choose the longest
-else
-    
-    % Identify two objects
-    objects = bwconncomp(two_longest);
-    
-    % If there are indeed two objects
-    if size(objects.PixelIdxList,2)>1
-        % Evaluate centroids
-        props = regionprops(two_longest,'Centroid');
-        for i = 1:2
-            Cy(i) = props(i).Centroid(2);
-        end
-        
-        % Choose the biggest
-        [~,minloc] = min(Cy);
-        two_longest(objects.PixelIdxList{minloc}) = 0;
-    end
-    apo_obj = two_longest;
-end
-
+apo_simple_raw = nan(size(parms.apox));
+betha = nan(1,1);
 
 % Give up if too small
 props = regionprops(apo_obj,'Majoraxislength');
@@ -93,8 +65,12 @@ for i = 1:length(parms.apox)
     % if x-value exists for parms.apox value, choose the maximum
     if sum(iapo_objx == parms.apox(i)) > 0 && isfinite(maxapo(i))
         all_blackpixels = iapo_objy(iapo_objx == parms.apox(i));
-        apo_simple(:,i) = min(all_blackpixels(all_blackpixels>minapo(i)));
+        apo_simple_raw(:,i) = min(all_blackpixels(all_blackpixels>minapo(i)));
     end
 end 
 
+apo_simple = apo_simple_raw - parms.frangi.FrangiScaleRange(2)/2;
+
 end
+
+

@@ -6,6 +6,8 @@ addpath(genpath(cd))
 % Load parameters
 load('parms.mat')
 parms.show = 1;
+parms.fas.cut = .2;
+
 
 % Load image
 load('Data\example_ultrasound_image.mat');
@@ -16,6 +18,7 @@ apospacing = 20; % horizontal spacing for aponeurosis (pixels)
 parms.apo.apox = apomargin:apospacing:(m-apomargin);
 
 %% Determine alpha, beta, thickness
+parms.fas.npeaks = 5;
 [alpha, betha, thickness] = auto_ultrasound(data,parms);
 
 %% Determine fascicle length and pennation angle

@@ -38,16 +38,16 @@ fas_thres(1:(parms.middle-round(n*parms.cut(1))),:) = 0;
 fas_thres(  (parms.middle+round(n*parms.cut(1))):end,:) = 0;
 
     if side == 1 % left
-        fas_thres(:,1:round(m/2-2*n*parms.cut(1))) = 0;
-        fas_thres(:,round(m/2):end) = 0;
+        fas_thres(:,1:10) = 0;
+        fas_thres(:,round(2*n*parms.cut(1))+10:end) = 0;
         
     elseif side == 2 % middle
         fas_thres(:,1:round(m/2-n*parms.cut(1))) = 0;
         fas_thres(:,round(m/2+n*parms.cut(1)):end) = 0;
         
     else % right   
-        fas_thres(:,1:round(m/2)) = 0;
-        fas_thres(:,  round(m/2+2*n*parms.cut(1)):end,:) = 0;
+        fas_thres(:,(end-10):end) = 0;
+        fas_thres(:,1:(end-(round(2*n*parms.cut(1))+10))) = 0;
     end
     
 % edge detection (not super critical I think)
@@ -79,12 +79,12 @@ lines = houghlines(fas_edge,theta,rho,P,'FillGap',1000,'MinLength',1); % Fillgap
 %  plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
 % end
 if ~isempty(lines)
-    lines_out = [lines(1).point1 lines(1).point2];
+    lines_out(:,:,side) = [lines(1).point1 lines(1).point2];
 else
-    lines_out = nan(1,4);
+    lines_out(:,:,side) = nan(1,4);
 end
 end
 
-alpha = mean(alphas);
+alpha = median(alphas);
 
 end

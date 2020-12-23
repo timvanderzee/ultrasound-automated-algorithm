@@ -1,28 +1,30 @@
-function[alpha, betha, thickness] = auto_ultrasound(data,parms)
+function[alpha, betha, thickness, parms] = auto_ultrasound(data,parms)
+
+% define outputs
+alpha = nan(3,1);
+betha = nan(1,1);
+thickness = nan(1,1);
 
 [n,m] = size(data);
 
 %% Step 1: Filtering
-% aponeurosis
-aponeurosis = FrangiFilter2D(double(data), parms.apo.frangi);
-super_filt = bwpropfilt(imbinarize(aponeurosis(:,parms.apo.apox(1):parms.apo.apox(end))),'orientation', parms.apo.superrange);
-deep_filt = bwpropfilt(imbinarize(aponeurosis(:,parms.apo.apox(1):parms.apo.apox(end))),'orientation', parms.apo.deeprange);
-
-% fascicle
-fascicle = FrangiFilter2D(double(data), parms.fas.frangi);
+[fascicle, super_filt, deep_filt] = filter_usimage(data,parms);
 
 %% Step 2: Feature detection
-% superficial aponeurosis
-super_filt(round(parms.apo.supercut*n):end,:) = 0;  
-[super_aponeurosis, betha] = apo_func(super_filt, parms.apo);
+[deep_obj, parms.apo.SVM.deep] = get_apo_obj(deep_filt, parms.apo.SVM.deep);
+[super_obj, parms.apo.SVM.super] = get_apo_obj(super_filt, parms.apo.SVM.super);
 
-% deep aponeurosis
-deep_filt(1:round(parms.apo.deepcut*n),:) = 0;  
-deep_aponeurosis = n - apo_func(flip(deep_filt), parms.apo);
+[super_aponeurosis, betha] = apo_func(super_obj, parms.apo);
+deep_aponeurosis = n - apo_func(flip(deep_obj), parms.apo);
 
 %% Step 2b: Fascicle angle detection
 % plot regions
 parms.fas.middle = round((mean(deep_aponeurosis,'omitnan') + mean(super_aponeurosis,'omitnan'))/2);
+
+if isnan(parms.fas.middle)
+    parms.fas.middle = n/2;
+    disp('Warning: undetected aponeurosis');
+end
 
 % Fascicle (Hough)
 [alpha, fascicle_lines] = dohough(fascicle,parms.fas);
@@ -41,17 +43,22 @@ if parms.show
     imshow(data,[]);
 
     % plot region of interest
-    line('xdata',[round(m/2-n*c(1)) round(m/2+n*c(1)) round(m/2+n*c(1)) round(m/2-n*c(1)) round(m/2-n*c(1))], ...
+    line('xdata',[1 m m 1 1], ...
          'ydata',[parms.fas.middle-(n*c(1)), parms.fas.middle-(n*c(1)) parms.fas.middle+(n*c(1)) parms.fas.middle+(n*c(1)) parms.fas.middle-(n*c(1))] ...
         ,'linestyle','--', 'linewidth', 2, 'color', color(2,:))
 
-    line('xdata', [parms.apo.apox(1) parms.apo.apox(end)] , 'ydata', n.*[parms.apo.supercut parms.apo.supercut],'linewidth',2, 'linestyle', '--', 'color', color(6,:))
-    line('xdata', [parms.apo.apox(1) parms.apo.apox(end)] , 'ydata', n.*[parms.apo.deepcut parms.apo.deepcut],'linewidth',2, 'linestyle', '--', 'color', color(5,:))
-        
+    for i = 1:2
+    line('xdata', [parms.apo.apox(1) parms.apo.apox(end)] , 'ydata', n.*[parms.apo.supercut(i) parms.apo.supercut(i)],'linewidth',2, 'linestyle', '--', 'color', color(6,:))
+    line('xdata', [parms.apo.apox(1) parms.apo.apox(end)] , 'ydata', n.*[parms.apo.deepcut(i) parms.apo.deepcut(i)],'linewidth',2, 'linestyle', '--', 'color', color(5,:))
+    end
+    
     % plot identified aponeuroses and fascicle
     line('xdata',parms.apo.apox, 'ydata', deep_aponeurosis,'linewidth',3, 'color', color(5,:))
     line('xdata',parms.apo.apox, 'ydata', super_aponeurosis,'linewidth',3, 'color', color(6,:));
-    line('xdata',[fascicle_lines(1,1) fascicle_lines(1,3)],'ydata',[fascicle_lines(1,2) fascicle_lines(1,4)],'LineWidth',3, 'color', color(2,:))
+    
+    for s = 1:3
+    line('xdata',[fascicle_lines(1,1,s) fascicle_lines(1,3,s)],'ydata',[fascicle_lines(1,2,s) fascicle_lines(1,4,s)],'LineWidth',3, 'color', color(2,:))
+    end
 drawnow
 
 end
@@ -59,4 +66,6 @@ end
 %% Error messages
 if isnan(betha)
     disp('Not able to find aponeuroses, try changing the parameters')
+end
+
 end
