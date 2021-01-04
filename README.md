@@ -11,7 +11,7 @@ In addition, it has been used to estimate muscle work and its associated energet
 
 **Inputs**
 
-* data: needs to be a m-by-n numeric array specifying grayscale intensities, saved in .mat format. Fascicle angle needs to be within the range 0-90 deg with the positive horinzontal, pointing to the right. Depending on your specific image, you may need to flip about the vertical axis. For an example of flipping, reading and converting images to .mat, see Data\convert_png_to_mat.mat
+* data: needs to be a m-by-n numeric array specifying grayscale intensities, saved in .mat format. Fascicle angle needs to be within the range 0-90 deg with the positive horinzontal, pointing to the right. Depending on your specific image, you may need to flip about the vertical axis. For an example of flipping, reading and converting images to .mat, see *Data\convert_png_to_mat.m*
 * parms: struct specifying the parameters used in the algorithm, with fields fas and apo
 
 **Outputs**
