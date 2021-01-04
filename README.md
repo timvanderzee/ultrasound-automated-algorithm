@@ -33,8 +33,9 @@ Both scripts run auto_ultrasound.m on example image(s)
 **Example_live.mlx**: live script that facilitates updating parameter values and investigate their effect
 
 An important parameter is parms.apo.deepcut, which specifies the region of interest for the deep aponeurosis. This region may differ quite substantially between images.
-In some images (e.g. Data\example_ultrasound_image.mat), the deep aponeurosis is near the bottom of the image. In other images (e.g. Data\example_ultrasound_image3.mat), the deep aponeurosis is in the middle of the image. The region of interest is specified with an upper and lower limit, shown as dashed horizontal lines in the  example image below 
+In some images (e.g. Data\example_ultrasound_image.mat), the deep aponeurosis is near the bottom of the image. In other images (e.g. Data\example_ultrasound_image3.mat), the deep aponeurosis is in the middle of the image. The region of interest is specified with an upper and lower limit, shown as dashed horizontal lines in the example images below. Note that these two different images have very different values for parms.apo.deepcut
 ![picture](example.png)
+![picture](example3.png)
 
 ## Folders
 
