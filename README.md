@@ -1,6 +1,6 @@
 # Ultrasound-automated-algorithm
 
-This respository includes code that can be used to estimate muscle fascicle lengths and pennation angles from muscle ultrasound images. The algorithm uses a combination of Frangi filtering, Hough transform and feature detection. 
+This respository includes code that can be used to estimate muscle fascicle lengths and pennation angles from muscle ultrasound images. The algorithm uses a combination of Frangi filtering, Hough transform and machine learning (support vector machine, SVM). 
 
 This algorithm has been used for determination of fascicle lengths during isometric knee torque production, see: https://www.biorxiv.org/content/10.1101/2020.08.23.263574v1
 
@@ -11,7 +11,7 @@ In addition, it has been used to estimate muscle work and its associated energet
 
 **Inputs**
 
-* data: needs to be grayscale (therefore m-by-n numeric array). see: https://www.mathworks.com/help/matlab/ref/rgb2gray.html on how to convert rgb to grayscale
+* data: needs to be a m-by-n numeric array specifying grayscale intensities, saved in .mat format. Fascicle angle needs to be within the range 0-90 deg with the positive horinzontal, pointing to the right. Depending on your specific image, you may need to flip about the vertical axis. For an example of flipping, reading and converting images to .mat, see Data\convert_png_to_mat.mat
 * parms: struct specifying the parameters used in the algorithm, with fields fas and apo
 
 **Outputs**
@@ -32,14 +32,29 @@ Both scripts run auto_ultrasound.m on example image(s)
 
 **Example_live.mlx**: live script that facilitates updating parameter values and investigate their effect
 
+An important parameter is parms.apo.deepcut, which specifies the region of interest for the deep aponeurosis. This region may differ quite substantially between images.
+In some images (e.g. Data\example_ultrasound_image.mat), the deep aponeurosis is near the bottom of the image. In other images (e.g. Data\example_ultrasound_image3.mat), the deep aponeurosis is in the middle of the image. The region of interest is specified with an upper and lower limit, shown as dashed horizontal lines in the  example image below 
+![picture](example.png)
+
 ## Folders
-**Frangi Filter**: contains Frangi filter functions created by Dirk-Jan Kroon (https://www.mathworks.com/matlabcentral/fileexchange/24409-hessian-based-frangi-vesselness-filter)
+
+**Filter**
+
+* *filter_usimage.m*: main filter function which calls on several Frangi filter functions created by Dirk-Jan Kroon (https://www.mathworks.com/matlabcentral/fileexchange/24409-hessian-based-frangi-vesselness-filter)
 
 **Aponeurosis**
 
-* *apo_func.m*: uses feature detection to extract the location of the superficial or deep aponeurosis, which is used to determine muscle thickness and superficial aponeurosis angle
+* *retrain_SVM.m*: example script for retraining the SVM model using the function *train_apo_SVM.m* and example data *example_ultrasound_video.mat*
 
-* *cut_apo*: cuts the actual ultrasound image out of the original image (the latter includes a black frame). This would not be neccesary if the ultrasound image takes up the entire original image
+* *train_apo_SVM.m*: function for retraining SVM model using the labelling function *get_labeled_data.m* 
+
+* *get_labeled_data.m*: manually labels images (correct/incorrect) with assigned properties using function *get_apo_props.m*
+
+* *get_apo_props.m*: extract certain properties from aponeurosis objects that are used by SVM 
+
+* *get_apo_obj.m*: finds aponeurosis object given data and SVM model
+
+* *apo_func.m*: finds the aponeurosis vector given aponeurosis object
 
 **Hough**
 
@@ -51,25 +66,22 @@ Both scripts run auto_ultrasound.m on example image(s)
 
 **Data**: contains example data
 
-*example_ultrasound_image.mat*
+*example_ultrasound_image*
 * Muscle: Vastus Lateralis
 * Ultrasound device: General Electric Logiq E9
 * Facility: University of Calgary, Canada
 * Investigator: Tim van der Zee
-* Format: .mat
 
-*example_ultrasound_image2.png*
+*example_ultrasound_image2*
 * Muscle: Vastus Lateralis
 * Ultrasound device: Telemed LVD8-4L65S-3
 * Facility: University of Verona, Italy
 * Investigator: Paolo Tecchio
-* Format: .png
 
-*example_ultrasound_image3.png*
+*example_ultrasound_image3*
 * Muscle: Gastrocnemius Medialis
 * Ultrasound device: Telemed LVD8-4L65S-3
 * Facility: University of Verona, Italy
 * Investigator: Paolo Tecchio
-* Format: .png
 
 For questions, please email me: tim.vanderzee@ucalgary.ca
