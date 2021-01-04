@@ -48,8 +48,8 @@ if parms.show
         ,'linestyle','--', 'linewidth', 2, 'color', color(2,:))
 
     for i = 1:2
-    line('xdata', [parms.apo.apox(1) parms.apo.apox(end)] , 'ydata', n.*[parms.apo.supercut(i) parms.apo.supercut(i)],'linewidth',2, 'linestyle', '--', 'color', color(6,:))
-    line('xdata', [parms.apo.apox(1) parms.apo.apox(end)] , 'ydata', n.*[parms.apo.deepcut(i) parms.apo.deepcut(i)],'linewidth',2, 'linestyle', '--', 'color', color(5,:))
+        line('xdata', [parms.apo.apox(1) parms.apo.apox(end)] , 'ydata', n.*[parms.apo.supercut(i) parms.apo.supercut(i)],'linewidth',2, 'linestyle', '--', 'color', color(6,:))
+        line('xdata', [parms.apo.apox(1) parms.apo.apox(end)] , 'ydata', n.*[parms.apo.deepcut(i) parms.apo.deepcut(i)],'linewidth',2, 'linestyle', '--', 'color', color(5,:))
     end
     
     % plot identified aponeuroses and fascicle

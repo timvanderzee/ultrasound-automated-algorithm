@@ -22,8 +22,10 @@ for i = 1:20
         break
     end
     
-    [X(i,:), Y(i)] = eval_SVM(data,aponeurosis);
+    % get labeled data from aponeurosis image
+    [X(i,:), Y(i)] = get_labeled_data(data,aponeurosis);
 end
 
+% train SVM model based on labeled data
 SVMModel = fitcsvm(X,Y(:));
 end
