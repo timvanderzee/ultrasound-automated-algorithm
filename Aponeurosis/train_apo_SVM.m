@@ -1,10 +1,15 @@
 function[SVMModel, X, Y] = train_apo_SVM(randdata,parms,type)
 
-Y = nan(10,1);
-X = nan(10,4);
+Y = [];
+X = [];
 
-for i = 1:20   
-    data = rgb2gray(randdata(:,:,:,i));
+for i = 1:10
+    if size(randdata,4)>1
+        data = rgb2gray(randdata(:,:,:,i));
+    else
+        data = randdata(:,:,i);
+    end
+    
     
     [~, super_filt, deep_filt] = filter_usimage(data,parms);
     
@@ -17,13 +22,13 @@ for i = 1:20
     
     disp(['# trues: ', num2str(sum(Y == 1))])
     disp(['# falses: ', num2str(sum(Y == 0))])
-    
-    if sum(Y == 1) > 2 && sum(Y == 0) > 2
-        break
-    end
+   
     
     % get labeled data from aponeurosis image
-    [X(i,:), Y(i)] = get_labeled_data(data,aponeurosis);
+    [Xnew, Ynew] = get_labeled_data(data,aponeurosis);
+    
+    X = [X; Xnew];
+    Y = [Y; Ynew];
 end
 
 % train SVM model based on labeled data

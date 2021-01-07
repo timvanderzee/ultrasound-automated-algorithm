@@ -28,6 +28,8 @@ parms.apo.maxlengthratio = 0.7; % maximal ratio between longest and second longe
 parms.apo.fillgap = 5; % gap filling in the aponeurosis (pixels)
 parms.apo.apomargin = 100; % distance between start aponeurosis objects and the sides (pixels)
 parms.apo.apospacing = 10; % horizontal spacing for aponeurosis (pixels) 
+
+load('example_ultrasound_image.mat')
 [n,m,~,~] = size(data); % data needs to be a n-by-m numeric array
 parms.apo.apox = parms.apo.apomargin:parms.apo.apospacing:(m-parms.apo.apomargin);
 
@@ -43,4 +45,6 @@ parms.fas.rhores =1;
 parms.fas.houghangles = 'manual';
 
 parms.show = false;
+
+cd('Parameters')
 save('parms.mat','parms')

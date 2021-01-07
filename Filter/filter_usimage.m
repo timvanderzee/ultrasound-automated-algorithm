@@ -15,8 +15,8 @@ deep_apo((round(parms.apo.deepcut(2)*n):end),:) = 0;
 super_apo(1:round(parms.apo.supercut(1)*n),:) = 0;  
 super_apo(round(parms.apo.supercut(2)*n):end,:) = 0;  
 
-super_filt = bwareaopen(bwpropfilt(imbinarize(super_apo),'orientation', parms.apo.superrange), 200);
-deep_filt = bwareaopen(bwpropfilt(imbinarize(deep_apo,'adaptive','sensitivity', .3),'orientation', parms.apo.deeprange),200);
+super_filt = bwareaopen(imbinarize(super_apo), 200);
+deep_filt = bwareaopen(imbinarize(deep_apo,'adaptive','sensitivity', .3),200);
 
 
 % fascicle

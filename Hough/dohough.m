@@ -31,7 +31,7 @@ fasangles = anglerange(1):parms.thetares:anglerange(2);
 
 for side = 1:3
 % thresholding
-fas_thres = imbinarize(fascicle);
+fas_thres = bwpropfilt(imbinarize(fascicle), 'orientation', parms.range);
 
 % cutting
 fas_thres(1:(parms.middle-round(n*parms.cut(1))),:) = 0;
