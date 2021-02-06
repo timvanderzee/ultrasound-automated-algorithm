@@ -1,12 +1,15 @@
 function [X] = get_apo_props(object)
 
-obj_props = regionprops('struct',object,'MajorAxisLength','MinorAxisLength','Area','Centroid');
+o = regionprops('struct',object,'MajorAxisLength','MinorAxisLength','Area','Centroid','Orientation','Eccentricity','ConvexArea','Circularity','EquivDiameter','Solidity','Extent','Perimeter');
+c = struct2cell(o);
 
-rMaAL = obj_props.MajorAxisLength;
-rMiAL = obj_props.MinorAxisLength;
-rArea = obj_props.Area;
-rCent = obj_props.Centroid(2);
-
-X = [rMaAL(:) rMiAL(:) rArea(:) rCent(:)];
+for i = 1:length(c)
+    
+    if size(c{i},2)<2
+        X(i) = c{i};
+    else
+        X(i) = c{i}(2);
+    end
+end
 
 end

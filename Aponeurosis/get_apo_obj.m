@@ -16,6 +16,9 @@ for i = 1:n
    
 end
 
+if sum(Y) == 0
+    disp('Warning: could not find a suitable aponeurosis object')
+end
 % choose the object most likely to be aponeurosis (max. score value)
 [~, idx] = max(score(:,2));
 apo_obj = objects == idx;

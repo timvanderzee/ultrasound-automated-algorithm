@@ -17,12 +17,6 @@ apo_simple = nan(size(parms.apox));
 apo_simple_raw = nan(size(parms.apox));
 betha = nan(1,1);
 
-% Give up if too small
-props = regionprops(apo_obj,'Majoraxislength');
-if props.MajorAxisLength < parms.minlength
-    return
-end
-    
 %% Determine angle
 objprops = regionprops(apo_obj, 'orientation');
 betha = objprops.Orientation;
@@ -30,6 +24,9 @@ betha = objprops.Orientation;
 %% Find the extremes on the object
 % fill holes
 apo_obj = imfill(apo_obj, 'holes');
+
+% close
+apo_obj = imclose(apo_obj,strel('disk',10));
 
 % extract the white pixel locations
 [apo_objy,apo_objx] = find(apo_obj);
@@ -69,7 +66,8 @@ for i = 1:length(parms.apox)
     end
 end 
 
-apo_simple = apo_simple_raw - parms.frangi.FrangiScaleRange(2)/2;
+apo_simple = apo_simple_raw;
+% apo_simple = apo_simple_raw - parms.frangi.FrangiScaleRange(2)/2;
 
 end
 

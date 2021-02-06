@@ -5,7 +5,6 @@ addpath(genpath(cd))
 
 % Load parameters
 load('parms.mat')
-parms.show = 1;
 
 % Load image
 load('Data\example_ultrasound_image.mat');

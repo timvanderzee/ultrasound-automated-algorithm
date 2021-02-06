@@ -31,7 +31,7 @@ fasangles = anglerange(1):parms.thetares:anglerange(2);
 
 for side = 1:3
 % thresholding
-fas_thres = bwpropfilt(imbinarize(fascicle), 'orientation', parms.range);
+fas_thres = fascicle;
 
 % cutting
 fas_thres(1:(parms.middle-round(n*parms.cut(1))),:) = 0;
@@ -57,6 +57,7 @@ fas_edge = fas_thres;
 %% Determine alpha
 % hough transform
 [hmat,theta,rho] = hough(fas_edge,'RhoResolution',parms.rhores,'Theta',fasangles);
+% surf(theta, rho, hmat,'Edgecolor','none')
 
 % find largest hmat value for each theta (i.e. each column)
 hmax = nan(1,size(hmat,2));
@@ -85,6 +86,6 @@ else
 end
 end
 
-alpha = median(alphas);
+alpha = median(alphas,'omitnan');
 
 end
