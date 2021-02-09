@@ -1,5 +1,7 @@
-function[apo_obj, SVM] = get_apo_obj(apo_filt, SVM)
+function[apo_obj] = get_apo_obj(apo_filt, parms)
 
+if strcmp(parms.method, 'SVM')
+%% SVM
 % get all objects in the image
 [objects, n] = bwlabel(apo_filt);
 
@@ -12,7 +14,7 @@ for i = 1:n
     object = objects == i;  
 
     X = get_apo_props(object);
-    [Y(i), score(i,:)] = predict(SVM.model,X);
+    [Y(i), score(i,:)] = predict(parms.SVM.model,X);
    
 end
 
@@ -23,5 +25,9 @@ end
 [~, idx] = max(score(:,2));
 apo_obj = objects == idx;
 
+else
+    %% Just choose the longest
+    apo_obj = bwpropfilt(apo_filt,'majoraxislength',1,'largest');
+end
 end
 

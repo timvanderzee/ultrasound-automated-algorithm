@@ -16,6 +16,10 @@ parms.apo.deep = deep;
 parms.apo.super = super;
 parms.apo.ntraining = 4;
 
+parms.apo.deep.method = 'longest';
+parms.apo.super.method = 'longest';
+
+
 %% Filtering parameters
 % These parameters are used in the function filter_usimage
 
@@ -24,6 +28,7 @@ parms.apo.show = 0;
 parms.apo.frangi.FrangiScaleRange = [18 20];
 parms.apo.frangi.BlackWhite = 0;
 parms.apo.frangi.FrangiScaleRatio = 1;
+parms.apo.frangi.verbose = false;
 
 % Superficial aponeurosis
 parms.apo.super.th = .5;
@@ -39,6 +44,7 @@ parms.apo.deep.cut = [.62 .9]; % fraction of vertical ascribed to deep aponeuros
 parms.fas.frangi.FrangiScaleRange = [1 2];
 parms.fas.frangi.BlackWhite = 0;
 parms.fas.frangi.FrangiScaleRatio = 1;
+parms.fas.frangi.verbose = false;
 parms.fas.th = .5;
 
 %% Aponeurosis select parameters
