@@ -1,4 +1,4 @@
-function[apo_obj] = get_apo_obj(apo_filt, parms)
+function[apo_obj,parms] = get_apo_obj(data, apo_filt, parms)
 
 if strcmp(parms.method, 'SVM')
 %% SVM
@@ -27,7 +27,41 @@ apo_obj = objects == idx;
 
 else
     %% Just choose the longest
-    apo_obj = bwpropfilt(apo_filt,'majoraxislength',1,'largest');
+    
+%     % longest two
+%     apo_objs = bwpropfilt(apo_filt,'majoraxislength',2,'largest');
+%     MAL = regionprops(apo_objs,'MajorAxisLength');
+%     
+%     % if close call
+%     if min(MAL.MajorAxisLength) / max(MAL.MajorAxisLength) > .7
+%         
+%         % if SVM exists, let it decide
+%         if ~isempty(parms.SVM.model)
+%             [objects, n] = bwlabel(apo_filt);
+% 
+%             for i = 1:n
+%                 object = objects == i;  
+% 
+%                 X = get_apo_props(object);
+%                 [Y(i), score(i,:)] = predict(parms.SVM.model,X);
+% 
+%             end
+%             
+%             [~, idx] = max(score(:,2));
+%             apo_obj = objects == idx;
+%             
+%             % if it doesn't exist, make it
+%         else
+%             
+%         figure;
+%         [parms.SVM.X,parms.SVM.Y, apo_obj] = get_labeled_data(data,apo_objs);
+%          parms.SVM.model = fitcsvm(parms.SVM.X, parms.SVM.Y(:));
+%         end
+%     else
+    
+        % if not a close call: pick longest
+        apo_obj = bwpropfilt(apo_filt,'majoraxislength',1,'largest');
+%     end
 end
 end
 

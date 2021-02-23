@@ -1,4 +1,4 @@
-function[X,Y] = get_labeled_data(data,aponeurosis)    
+function[X,Y,apo_obj] = get_labeled_data(data,aponeurosis)    
        
 % get_labeled_data gets labeled data from the aponeurosis image. 
 %
@@ -32,6 +32,7 @@ for i = 1:n
     Y(i,1) = sum(oy(ox == x(2)) == x(1));
     
     if Y(i,1)
+        apo_obj = object;
         figure(1);
         plot(oy,ox,'r.','linewidth',2)
         drawnow

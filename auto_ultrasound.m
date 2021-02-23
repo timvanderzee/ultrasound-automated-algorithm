@@ -1,68 +1,53 @@
-function[alpha, betha, thickness, gamma, heightvec] = auto_ultrasound(data,parms)
+function[alpha, betha, thickness, parms] = auto_ultrasound(data,parms)
 
 [n,m] = size(data);
 
 %% Step 1: Filtering
-[fascicle, super_filt, deep_filt] = filter_usimage(data,parms);
+[fascicle, super_obj, deep_obj] = filter_usimage(data,parms);
 
 %% Step 2: Feature detection
-deep_obj = get_apo_obj(deep_filt, parms.apo.deep);
-super_obj = get_apo_obj(super_filt, parms.apo.super);
+[super_aponeurosis_raw, betha] = apo_func(super_obj, parms.apo.super);
+deep_aponeurosis_raw = n - (apo_func(flip(deep_obj), parms.apo.deep));
 
-[super_aponeurosis] = apo_func(super_obj, parms.apo.super);
-deep_aponeurosis = n - apo_func(flip(deep_obj), parms.apo.deep);
-
-% alternative betha
-p = polyfit(parms.apo.super.apox(isfinite(super_aponeurosis)),super_aponeurosis(isfinite(super_aponeurosis)),1);
-betha = -atan2d(p(1),1);
-
-p = polyfit(parms.apo.deep.apox(isfinite(deep_aponeurosis)),deep_aponeurosis(isfinite(deep_aponeurosis)),1);
-gamma = -atan2d(p(1),1);
+% Correct for width of Gaussian kernel
+super_aponeurosis_vector = super_aponeurosis_raw - parms.apo.sigma;
+deep_aponeurosis_vector = deep_aponeurosis_raw + parms.apo.sigma;
 
 %% Step 2b: Fascicle angle detection
-parms.fas.middle = round((mean(deep_aponeurosis,'omitnan') + mean(super_aponeurosis,'omitnan'))/2);
-
-if isnan(parms.fas.middle)
-    parms.fas.middle = n/2;
-    disp('Warning: undetected aponeurosis');
-end
+% Determine fascicle region using detected aponeuroses
+parms.fas.middle = round((mean(deep_aponeurosis_vector,'omitnan') + mean(super_aponeurosis_vector,'omitnan'))/2);
+parms.fas.cut = round((mean(deep_aponeurosis_vector,'omitnan') - mean(super_aponeurosis_vector,'omitnan'))/2);
 
 % Fascicle (Hough)
-[alpha, fascicle_lines] = dohough(fascicle,parms.fas);
-
-if isnan(alpha)
-    disp('Issue with detecting fascicles')
-end
+alpha = dohough(fascicle,parms.fas);
 
 %% Step 3: Variables extraction
-heightvec = deep_aponeurosis-super_aponeurosis;
-height = mean(heightvec,'omitnan');
+height = mean(deep_aponeurosis_vector - super_aponeurosis_vector,'omitnan');
 thickness = height * cosd(betha);
 
 %% Plot things
 if parms.show
-    %% Plotting 
    
-%     [dx,dy] = find(edge(deep_obj));     [sx,sy] = find(edge(super_obj));
-    
     imshow(data,[]);
     
-%     hold on; plot(dy,dx,'r.'); plot(sy,sx,'r.')
-    
-    line('xdata',parms.apo.deep.apox, 'ydata', deep_aponeurosis,'linewidth',3, 'color', 'Blue')
-    line('xdata',parms.apo.super.apox, 'ydata', super_aponeurosis,'linewidth',3, 'color', 'Blue');
+    line('xdata',parms.apo.deep.apox, 'ydata', deep_aponeurosis_vector,'linewidth',3, 'color', 'Blue')
+    line('xdata',parms.apo.super.apox, 'ydata', super_aponeurosis_vector,'linewidth',3, 'color', 'Blue');
 
-    for u = 1:round(n/30)-1
-        line('xdata', [1 m], 'ydata', [n round(n-tand(alpha)*m)]-(u-1)*30,'linewidth',1','linestyle','-', 'color', 'Red');
+    for u = 1:round(n/60)-1
+        line('xdata', [1 m], 'ydata', [n round(n-tand(alpha)*m)]-(u-1)*60,'linewidth',1','linestyle','-', 'color', 'Red');
     end
 
-%         for s = 1:3
-%             line('xdata',[fascicle_lines(1,1,s) fascicle_lines(1,3,s)],'ydata',[fascicle_lines(1,2,s) fascicle_lines(1,4,s)],'LineWidth',3, 'color', 'Red')
-%         end
     drawnow
 end
 
 %% Error messages
+if isnan(parms.fas.middle)
+    parms.fas.middle = n/2;
+    disp('Warning: undetected aponeurosis');
+end
+if isnan(alpha)
+    disp('Issue with detecting fascicles')
+end
 if isnan(betha)
     disp('Not able to find aponeuroses, try changing the parameters')
 end
