@@ -1,4 +1,4 @@
-function[alpha, betha, thickness, parms] = auto_ultrasound(data,parms)
+function[alpha, betha, thickness] = auto_ultrasound(data,parms)
 
 [n,m] = size(data);
 
@@ -6,8 +6,8 @@ function[alpha, betha, thickness, parms] = auto_ultrasound(data,parms)
 [fascicle, super_obj, deep_obj] = filter_usimage(data,parms);
 
 %% Step 2: Feature detection
-[super_aponeurosis_raw, betha] = apo_func(super_obj, parms.apo.super);
-deep_aponeurosis_raw = n - (apo_func(flip(deep_obj), parms.apo.deep));
+[super_aponeurosis_raw, betha] = apo_func(super_obj, parms.apo);
+deep_aponeurosis_raw = n - (apo_func(flip(deep_obj), parms.apo));
 
 % Correct for width of Gaussian kernel
 super_aponeurosis_vector = super_aponeurosis_raw - parms.apo.sigma;
@@ -26,12 +26,13 @@ height = mean(deep_aponeurosis_vector - super_aponeurosis_vector,'omitnan');
 thickness = height * cosd(betha);
 
 %% Plot things
+apox = parms.apo.apomargin:parms.apo.apospacing:(m-parms.apo.apomargin);
 if parms.show
    
     imshow(data,[]);
     
-    line('xdata',parms.apo.deep.apox, 'ydata', deep_aponeurosis_vector,'linewidth',3, 'color', 'Blue')
-    line('xdata',parms.apo.super.apox, 'ydata', super_aponeurosis_vector,'linewidth',3, 'color', 'Blue');
+    line('xdata',apox, 'ydata', deep_aponeurosis_vector,'linewidth',3, 'color', 'Blue')
+    line('xdata',apox, 'ydata', super_aponeurosis_vector,'linewidth',3, 'color', 'Blue');
 
     for u = 1:round(n/60)-1
         line('xdata', [1 m], 'ydata', [n round(n-tand(alpha)*m)]-(u-1)*60,'linewidth',1','linestyle','-', 'color', 'Red');
