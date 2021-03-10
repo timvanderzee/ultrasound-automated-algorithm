@@ -28,6 +28,7 @@ DGaussxx = 1/(2*pi*Sigma^4) * (X.^2/Sigma^2 - 1) .* exp(-(X.^2 + Y.^2)/(2*Sigma^
 DGaussxy = 1/(2*pi*Sigma^6) * (X .* Y)           .* exp(-(X.^2 + Y.^2)/(2*Sigma^2));
 DGaussyy = DGaussxx';
 
-Dxx = imfilter(I,DGaussxx,'conv');
-Dxy = imfilter(I,DGaussxy,'conv');
-Dyy = imfilter(I,DGaussyy,'conv');
+% replicate added by TJZ from suggestion by Philip: https://www.mathworks.com/matlabcentral/fileexchange/24409-hessian-based-frangi-vesselness-filter
+Dxx = imfilter(I,DGaussxx,'conv','replicate');
+Dxy = imfilter(I,DGaussxy,'conv','replicate');
+Dyy = imfilter(I,DGaussyy,'conv','replicate');

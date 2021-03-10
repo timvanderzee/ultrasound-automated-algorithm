@@ -8,8 +8,6 @@ load('parms.mat')
 
 % Load image
 load('Data\example_ultrasound_image.mat');
-[n,m] = size(data); % data needs to be a n-by-m numeric array
-parms.apo.apox = parms.apo.apomargin:parms.apo.apospacing:(m-parms.apo.apomargin);
 
 %% Determine alpha, beta, thickness
 [alpha, betha, thickness] = auto_ultrasound(data,parms);

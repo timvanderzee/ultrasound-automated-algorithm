@@ -26,9 +26,10 @@ parms.apo.super.method = 'longest';
 parms.apo.sigma = 10;
 parms.apo.th = .5;
 parms.apo.filtfac = 1;
+parms.apo.maxlengthratio = .9;
 
 % Frangi aponeurosis
-parms.apo.frangi.FrangiScaleRange = [25 30];
+parms.apo.frangi.FrangiScaleRange = [18 20];
 parms.apo.frangi.BlackWhite = 0;
 parms.apo.frangi.FrangiScaleRatio = 1;
 parms.apo.frangi.verbose = false;
@@ -48,15 +49,9 @@ parms.fas.th = .5;
 
 %% Aponeurosis select parameters
 % These parameters are used in the function apo_func
-parms.apo.apomargin = 50; % distance between start aponeurosis objects and the sides (pixels)
-parms.apo.apospacing = 10; % horizontal spacing for aponeurosis (pixels) 
-
-load('example_ultrasound_image.mat')
-[n,m,~,~] = size(data); % data needs to be a n-by-m numeric array
-
-% Superficial
-parms.apo.super.apox = parms.apo.apomargin:parms.apo.apospacing:(m-parms.apo.apomargin);
-parms.apo.deep.apox = parms.apo.apomargin:parms.apo.apospacing:(m-parms.apo.apomargin);
+parms.apo.apomargin = 100; % distance between start aponeurosis objects and the sides (pixels)
+parms.apo.nextrap = 5;
+parms.apo.napo = 10;
 
 %% Fascicle selection
 % Hough parameters

@@ -1,47 +1,24 @@
 function[fas_thres, super_obj, deep_obj, th_apo] = filter_usimage(data,parms)
 
+% Determine size
 [n,m] = size(data);
 
 % Frangi Filter
-apo_filt = FrangiFilter2D(double(data), parms.apo.frangi);
-fas_filt = FrangiFilter2D(double(data), parms.fas.frangi);
+apo_filt = FrangiFilter2D(double(data), parms.apo.frangi); % filtered aponeurosis image
+fas_filt = FrangiFilter2D(double(data), parms.fas.frangi);  % filtered fascicle image
 
-% deep aponeurosis in deep aponeurosis region
-deep_apo_thres = imbinarize(data,'adaptive','sensitivity', parms.apo.th);
-deep_apo = (deep_apo_thres.^parms.apo.filtfac) .* apo_filt;
-deep_apo(1:round(parms.apo.deep.cut(1)*n),:) = 0;  
-deep_apo((round(parms.apo.deep.cut(2)*n):end),:) = 0; 
-deep_apo = imgaussfilt(deep_apo,parms.apo.sigma);
-deep_apo = imbinarize(deep_apo);
-deep_obj = bwpropfilt(deep_apo,'majoraxislength',1,'largest');
+% Aponeurosis objects
+super_obj = get_apo_obj(data, apo_filt, parms.apo.super.cut, parms.apo); % superficial aponeurosis object
+deep_obj = get_apo_obj(data, apo_filt, parms.apo.deep.cut, parms.apo); % deep aponeurosis object
 
-% superficial aponeurosis in superficial aponeurosis region
-super_apo_thres = imbinarize(data,'adaptive','sensitivity', parms.apo.th);
-super_apo = (super_apo_thres.^parms.apo.filtfac) .* apo_filt;
-super_apo(1:round(parms.apo.super.cut(1)*n),:) = 0;  
-super_apo(round(parms.apo.super.cut(2)*n):end,:) = 0;  
-super_apo = imgaussfilt(super_apo,parms.apo.sigma);
-super_apo = imbinarize(super_apo);
-super_obj = bwpropfilt(super_apo,'majoraxislength',1,'largest');
+% Fascicle image
+fas_thres = imbinarize(fas_filt,parms.fas.th); % threshold
+fas_thres(super_obj | deep_obj) = 0; % subtract aponeurosis objects
 
-% fascicle
-fas_thres = imbinarize(fas_filt,parms.fas.th);
-fas_thres = fas_thres - super_apo - deep_apo;
-fas_thres(fas_thres<0) = 0;
-
-%% For image
-% sum of aponeurosis
-th_apo = deep_obj + super_obj;
-th_apo(th_apo > 1) = 1;
-
-% sum of all
-th_image = th_apo + fas_thres;
-th_image(th_image>1) = 1;
-
+%% Optional: show image
 if parms.apo.show
-    figure;
     subplot(121);
-    imshow(th_image);
+    imshow(deep_obj+super_obj+fas_thres);
     
     color = get(gca,'colororder');
 
@@ -56,7 +33,39 @@ if parms.apo.show
     
     subplot(122);
 
- set(gcf,'units','normalized','position', [.1 .3 .6 .3])
+    set(gcf,'units','normalized','position', [.1 .3 .6 .3])
 end
+
+%% Function for aponeurosis object detection
+function[apo_obj] = get_apo_obj(data, apo_filt, cut, parms)
+    
+    % step 1.1c: threshold unfiltered image
+    apo_thres = imbinarize(data,'adaptive','sensitivity', parms.th); 
+    
+    % step 1.2b: multiply thresholded with filtered image
+    apo_thresfilt = apo_thres .* apo_filt.^parms.filtfac; 
+    
+    % cut region of interest
+    apo_thresfilt(1:round(cut(1)*n),:) = 0;  
+    apo_thresfilt((round(cut(2)*n):end),:) = 0; 
+    
+    % step 1.3: gaussian filtering
+    apo_gaussfilt = imgaussfilt(apo_thresfilt, parms.sigma); 
+
+    % step 1.4: second thresholding
+    apo_gaussfilt_thres = imbinarize(apo_gaussfilt,'adaptive','sensitivity', parms.th);
+
+    % step 2: select objects
+    apo_objs = bwpropfilt(apo_gaussfilt_thres,'majoraxislength',2,'largest'); % get two largest objects
+    apo_props = regionprops(apo_objs, apo_gaussfilt, 'MeanIntensity','Majoraxislength'); % get their properties
+
+    % if close call, chose the one with the highest mean intensity. if not,
+    % chose longest
+    if min(apo_props.MajorAxisLength) / max(apo_props.MajorAxisLength) > parms.maxlengthratio
+        apo_obj = bwpropfilt(apo_gaussfilt_thres,apo_gaussfilt,'MeanIntensity',1,'largest');
+    else, apo_obj = bwpropfilt(apo_gaussfilt_thres,'majoraxislength',1,'largest');
+    end
+end
+
 
 end
