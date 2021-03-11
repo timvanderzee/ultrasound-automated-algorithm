@@ -35,8 +35,14 @@ alpha = dohough(fascut,parms.fas);
 %% Step 3: Variables extraction
 % non-extrapolated
 super_aponeurosis_vector_int = polyval(super_coef,parms.apo.apox);
-heightvec = deep_aponeurosis_vector(1:end-parms.apo.nexcl) - super_aponeurosis_vector_int(1:end-parms.apo.nexcl);
+deep_aponeurosis_vector_int = polyval(deep_coef,parms.apo.apox);
+
+heightvec = deep_aponeurosis_vector - super_aponeurosis_vector_int;
+heightvec_int = deep_aponeurosis_vector_int - super_aponeurosis_vector_int;
+
 thicknessvec = heightvec * cosd(betha);
+thicknessvec_int = heightvec_int * cosd(betha);
+
 faslenvec = thicknessvec ./ sind(alpha-betha);
 
 % extrapolated
@@ -44,11 +50,11 @@ height_extrap = polyval(deep_coef,apox_extrap) - polyval(super_coef,apox_extrap)
 thickness_extrap = height_extrap * cosd(betha);
 faslen_extrap = thickness_extrap ./ sind(alpha-betha);
 
-% lump extrapolated and non-extrapolated, and average
-thickness = mean([thickness_extrap thicknessvec]);
-faslen = mean([faslen_extrap faslenvec]);
+% evaluate thickness and fascicle length
+thickness = (polyval(deep_coef,parms.apo.x) - polyval(super_coef,parms.apo.x)) * cosd(betha);
+faslen = thickness ./ sind(alpha-betha);
 
-%% Plot things
+%% Plot figure
 if parms.show
    
     color = get(gca,'colororder');
@@ -78,7 +84,7 @@ if parms.show
         'markerfacecolor',[1 1 1])
        
     % extrapolated points on superficial aponeurosis from non-extrapolated fascicles
-    line('xdata',parms.apo.apox(1:end-parms.apo.nexcl) + faslenvec*cosd(alpha), 'ydata', deep_aponeurosis_vector(1:end-parms.apo.nexcl) - faslenvec*sind(alpha),...
+    line('xdata',parms.apo.apox(1:end-parms.apo.nexcl) + faslenvec(1:end-parms.apo.nexcl)*cosd(alpha), 'ydata', deep_aponeurosis_vector(1:end-parms.apo.nexcl) - faslenvec(1:end-parms.apo.nexcl)*sind(alpha),...
         'linewidth',1, 'linestyle','-','marker','o','markersize',10,'color', color(6,:), 'markerfacecolor',[1 1 1])
 
     % extrapolated points on superficial aponeurosis from extrapolated fascicles
@@ -98,6 +104,22 @@ if parms.show
     end
     
     drawnow
+
+
+    %% Plot fascicle length and thickness vs. longitudinal position
+
+
+    % thickness
+    figure
+    plot((apox_extrap - parms.apo.apomargin)/delta_apo, thickness_extrap/delta_apo,'ko','markersize',10,'markerfacecolor',[1 1 1]); hold on
+    plot((parms.apo.apox(1:end-parms.apo.nexcl) - parms.apo.apomargin)/delta_apo, thicknessvec(1:end-parms.apo.nexcl)/delta_apo, 'ko','markersize',10,'markerfacecolor',[0 0 0])
+    plot((parms.apo.apox(end-parms.apo.nexcl+1:end) - parms.apo.apomargin)/delta_apo, thicknessvec(end-parms.apo.nexcl+1:end)/delta_apo, 'ko','markersize',10,'markerfacecolor',[.5 .5 .5])
+
+    line('xdata',-parms.apo.nextrap:1:(parms.apo.napo-1), 'ydata', [thickness_extrap thicknessvec_int]/delta_apo)
+
+    ylim([4 6])
+    xlim([-(parms.apo.nextrap+1) parms.apo.napo])
+    set(gca,'xtick', -(parms.apo.nextrap+1):1:parms.apo.napo)
 end
 
 %% Error messages
