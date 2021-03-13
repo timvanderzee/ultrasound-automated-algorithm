@@ -1,4 +1,4 @@
-function[alpha, betha, thickness, faslen] = auto_ultrasound(data,parms)
+function[alpha, betha, thickness, faslen,super_aponeurosis_vector,deep_aponeurosis_vector] = auto_ultrasound(data,parms)
 
 [n,m] = size(data);
 parms.apo.apox = round(linspace(parms.apo.apomargin, m-parms.apo.apomargin, parms.apo.napo));
