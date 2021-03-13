@@ -10,6 +10,11 @@ for i = 1:length(parms.apox)
     end
 end  
 
-apo_vec = interp1(parms.apox(isfinite(apo_simple)), apo_simple(isfinite(apo_simple)), parms.apox, 'linear', 'extrap');
+if sum(isfinite(apo_simple))>1
+    apo_vec = interp1(parms.apox(isfinite(apo_simple)), apo_simple(isfinite(apo_simple)), parms.apox, 'linear', 'extrap');
+else
+    apo_vec = nan(size(parms.apox));
+    disp('Warning: only 1 point on aponeurosis');
+end
 
 end

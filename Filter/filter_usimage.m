@@ -62,8 +62,8 @@ function[apo_obj] = get_apo_obj(data, apo_filt, cut, parms)
     % if close call, chose the one with the highest mean intensity. if not,
     % chose longest
     if min(apo_props.MajorAxisLength) / max(apo_props.MajorAxisLength) > parms.maxlengthratio
-        apo_obj = bwpropfilt(apo_gaussfilt_thres,apo_gaussfilt,'MeanIntensity',1,'largest');
-    else, apo_obj = bwpropfilt(apo_gaussfilt_thres,'majoraxislength',1,'largest');
+        apo_obj = bwpropfilt(apo_objs,apo_gaussfilt,'MeanIntensity',1,'largest');
+    else apo_obj = bwpropfilt(apo_objs,'majoraxislength',1,'largest');
     end
 end
 

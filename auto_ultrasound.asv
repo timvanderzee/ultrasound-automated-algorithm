@@ -27,12 +27,8 @@ apox_extrap = (parms.apo.apomargin-delta_apo*parms.apo.nextrap):delta_apo:(parms
 
 %% Step 2b: Fascicle angle detection
 % Determine fascicle region using detected aponeuroses
-if isfinite(mean(deep_aponeurosis_vector)) && isfinite(mean(super_aponeurosis_vector))
-    fascut = fascicle(round(mean(super_aponeurosis_vector)):round(mean(deep_aponeurosis_vector)),:);
-else
-    fascut = fascicle;
-    disp('Warning: no aponeurosis object');
-end
+if isfinite(mean(deep_aponeurosis_vector))
+fascut = fascicle(round(mean(super_aponeurosis_vector)):round(mean(deep_aponeurosis_vector)),:);
 
 % Fascicle (Hough)
 alpha = dohough(fascut,parms.fas);
