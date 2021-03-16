@@ -14,13 +14,6 @@ deep_aponeurosis_raw = n - (apo_func(flip(deep_obj), parms.apo));
 super_aponeurosis_vector = super_aponeurosis_raw - parms.apo.sigma;
 deep_aponeurosis_vector = deep_aponeurosis_raw + parms.apo.sigma;
 
-% First order fit through vectors
-super_coef = polyfit(parms.apo.apox(isfinite(super_aponeurosis_vector)),super_aponeurosis_vector(isfinite(super_aponeurosis_vector)),1);
-betha = -atan2d(super_coef(1),1);
-
-deep_coef = polyfit(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_aponeurosis_vector(isfinite(deep_aponeurosis_vector)),1);
-gamma = -atan2d(deep_coef(1),1);
-
 % Extrapolate deep aponeurosis
 delta_apo = mean(diff(parms.apo.apox));
 apox_extrap = (parms.apo.apomargin-delta_apo*parms.apo.nextrap):delta_apo:(parms.apo.apomargin-delta_apo);
@@ -38,6 +31,13 @@ end
 alpha = dohough(fascut,parms.fas);
 
 %% Step 3: Variables extraction
+% First order fit through vectors
+super_coef = polyfit(parms.apo.apox(isfinite(super_aponeurosis_vector)),super_aponeurosis_vector(isfinite(super_aponeurosis_vector)),1);
+betha = -atan2d(super_coef(1),1);
+
+deep_coef = polyfit(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_aponeurosis_vector(isfinite(deep_aponeurosis_vector)),1);
+gamma = -atan2d(deep_coef(1),1);
+
 % non-extrapolated
 super_aponeurosis_vector_int = polyval(super_coef,parms.apo.apox);
 deep_aponeurosis_vector_int = polyval(deep_coef,parms.apo.apox);
