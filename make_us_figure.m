@@ -62,7 +62,7 @@ line('xdata',parms.apo.apox, 'ydata', super_aponeurosis_vector,'linestyle','none
 
 % axis([-2*m 2*m -2*m 2*m]);
 % axis equal
-% drawnow
+drawnow
 
     
 end

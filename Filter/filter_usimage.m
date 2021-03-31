@@ -12,7 +12,8 @@ super_obj = get_apo_obj(data, apo_filt, parms.apo.super.cut, parms.apo); % super
 deep_obj = get_apo_obj(data, apo_filt, parms.apo.deep.cut, parms.apo); % deep aponeurosis object
 
 % Fascicle image
-fas_thres = imbinarize(fas_filt,parms.fas.th); % threshold
+fas_thres = imbinarize(fas_filt,'adaptive','sensitivity', parms.fas.th); % threshold
+% fas_thres2 = imbinarize(fas_filt,parms.fas.th); % threshold
 fas_thres(super_obj | deep_obj) = 0; % subtract aponeurosis objects
 
 %% Optional: show image

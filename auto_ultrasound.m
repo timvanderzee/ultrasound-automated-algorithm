@@ -11,8 +11,8 @@ super_aponeurosis_raw = apo_func(super_obj, parms.apo);
 deep_aponeurosis_raw = n - (apo_func(flip(deep_obj), parms.apo));
 
 % % Correct for width of Gaussian kernel
-super_aponeurosis_vector = super_aponeurosis_raw - parms.apo.sigma;
-deep_aponeurosis_vector = deep_aponeurosis_raw + parms.apo.sigma;
+super_aponeurosis_vector = super_aponeurosis_raw - .5*parms.apo.sigma;
+deep_aponeurosis_vector = deep_aponeurosis_raw + .5*parms.apo.sigma;
 
 % Extrapolate deep aponeurosis
 delta_apo = mean(diff(parms.apo.apox));
@@ -37,6 +37,20 @@ betha = -atan2d(super_coef(1),1);
 
 deep_coef = polyfit(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_aponeurosis_vector(isfinite(deep_aponeurosis_vector)),1);
 gamma = -atan2d(deep_coef(1),1);
+
+% if extrapolation mode choose width location to minimize amount of
+% extrapolation on each side
+if parms.extrapolation
+    
+    Mx = round(m/2);
+    My = mean([polyval(deep_coef, Mx) polyval(super_coef, Mx)]);
+    
+    fas_coef(1) = -tand(alpha);
+    fas_coef(2) =  My - Mx * fas_coef(1);
+    
+    parms.apo.x = fzero(@(x) polyval(deep_coef-fas_coef,x),0);
+    
+end
 
 % evaluate thickness and fascicle length
 thickness = (polyval(deep_coef,parms.apo.x) - polyval(super_coef,parms.apo.x)) * cosd(betha);
