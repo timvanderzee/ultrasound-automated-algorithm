@@ -7,7 +7,7 @@ betha = -atan2d(super_coef(1),1);
 super_aponeurosis_vector_int = polyval(super_coef,parms.apo.apox);
 
 % deep fit
-deep_coef = polyfit(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_aponeurosis_vector(isfinite(deep_aponeurosis_vector)),1);
+deep_coef = polyfit(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_aponeurosis_vector(isfinite(deep_aponeurosis_vector)),parms.apo.deep.order);
 gamma = -atan2d(deep_coef(1),1);
 deep_aponeurosis_vector_int = polyval(deep_coef,parms.apo.apox);
 

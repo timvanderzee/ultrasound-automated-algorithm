@@ -35,7 +35,7 @@ alpha = dohough(fascut,parms.fas);
 super_coef = polyfit(parms.apo.apox(isfinite(super_aponeurosis_vector)),super_aponeurosis_vector(isfinite(super_aponeurosis_vector)),1);
 betha = -atan2d(super_coef(1),1);
 
-deep_coef = polyfit(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_aponeurosis_vector(isfinite(deep_aponeurosis_vector)),1);
+deep_coef = polyfit(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_aponeurosis_vector(isfinite(deep_aponeurosis_vector)),parms.apo.deep.order);
 gamma = -atan2d(deep_coef(1),1);
 
 % if extrapolation mode choose width location to minimize amount of

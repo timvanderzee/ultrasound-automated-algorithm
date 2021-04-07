@@ -39,6 +39,7 @@ parms.apo.super.cut = [.05 .4]; % fraction of vertical ascribed to superficial a
 
 % Deep aponeurosis
 parms.apo.deep.cut = [.65 .95]; % fraction of vertical ascribed to deep aponeurosis
+parms.apo.deep.order = 1; % order of fit
 
 % Fascicle
 parms.fas.frangi.FrangiScaleRange = [1 2];
@@ -65,6 +66,8 @@ parms.fas.houghangles = 'manual';
 
 %% Other & Save
 parms.show = true;
+parms.show2 = false;
+parms.extrapolation = true;
 parms.apo.show = false;
 
 cd('Parameters')
