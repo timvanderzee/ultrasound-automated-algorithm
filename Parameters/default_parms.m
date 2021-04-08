@@ -36,10 +36,13 @@ parms.apo.frangi.verbose = false;
 
 % Superficial aponeurosis
 parms.apo.super.cut = [.05 .4]; % fraction of vertical ascribed to superficial aponeurosis
+parms.apo.super.order = 1; % order of fit
+parms.apo.super.maxangle = .5;
 
 % Deep aponeurosis
 parms.apo.deep.cut = [.65 .95]; % fraction of vertical ascribed to deep aponeurosis
 parms.apo.deep.order = 1; % order of fit
+parms.apo.deep.maxangle = .5;
 
 % Fascicle
 parms.fas.frangi.FrangiScaleRange = [1 2];

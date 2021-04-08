@@ -7,7 +7,7 @@ parms.apo.apox = round(linspace(parms.apo.apomargin, parms.m-parms.apo.apomargin
 
 for k = 1:size(deep_aponeurosis_vectors_int,1)
     super_coef = polyfit(parms.apo.apox,super_aponeurosis_vectors_int(k,:),1);
-    deep_coef = polyfit(parms.apo.apox,deep_aponeurosis_vectors_int(k,:),1);
+    deep_coef = polyfit(parms.apo.apox,deep_aponeurosis_vectors_int(k,:),parms.apo.deep.order);
 
     % evaluate thickness and fascicle length
     bethas(k,1) = -atan2d(super_coef(1),1);
