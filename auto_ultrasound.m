@@ -28,7 +28,7 @@ else
 end
 
 % Fascicle (Hough)
-alpha = dohough(fascut,parms.fas);
+alpha = dohough_v2(fascut,parms.fas);
 
 %% Step 3: Variables extraction
 % First order fit through vectors

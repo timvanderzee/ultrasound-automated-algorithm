@@ -1,4 +1,4 @@
-function[alpha] = dohough(fascicle,parms)
+function[alpha] = dohough_v2(fascicle,parms)
 
 % This function finds the muscle fascicle angle (alpha) 
 % given the filtered image (fascicle) and parameters (parms)
@@ -31,11 +31,10 @@ end
 [fx, fy] = find(fascicle);
 fascicle = fascicle(min(fx):max(fx), min(fy):max(fy));
 
-fasangles = anglerange(1):parms.thetares:anglerange(2);
+fasangles = anglerange(1):parms.thetares(1):anglerange(2);
 
 %% Cut out ellipse
 r = size(fascicle)/2;
-r(2) = r(1);
 th = linspace(0,2*pi) ;
 xc = (r(2)*parms.w_ellipse_rel) + (r(2)*parms.w_ellipse_rel)*cos(th) ; 
 % xc = r(2) + r(2)*cos(th); 
@@ -74,10 +73,34 @@ end
 gamma_sel = gamma(P(:,2));
 
 % alpha: median of selected angles
-alpha = median(gamma_sel);
+alpha1 = gamma_sel(1);
 
-alpha = dot(gamma_sel, w) / sum(w);
-    
+newfasrange = [alpha1-1 alpha1+1];
+newanglerange = sort(90-newfasrange);
+newfasangles = newanglerange(1):parms.thetares(2):newanglerange(2);
+[hmat,theta,rho] = hough(fascicle_cut,'RhoResolution',parms.rhores,'Theta',newfasangles);
+
+% angle of the line itself
+gamma = 90 - theta; % with horizontal
+
+% relative radius of the ellipse
+r_ellipse_rel = r(1) ./ sqrt(r(1)^2*cosd(gamma).^2 + r(2)^2*sind(gamma).^2);
+
+% correct for relative radius
+hmat_cor = round(hmat ./ repmat(r_ellipse_rel, size(hmat,1),1));
+
+% determine peaks
+P = houghpeaks(hmat_cor,parms.npeaks);
+
+for i = 1:length(P)
+    w(i) = hmat_cor(P(i,1),P(i,2));
+end
+
+% extract angles corresponding to peaks
+gamma_sel = gamma(P(:,2));
+
+% alpha: median of selected angles
+alpha = gamma_sel(1);
 
 %% Old method
 % for i = 1:length(P)
