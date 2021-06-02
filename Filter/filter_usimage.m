@@ -1,4 +1,4 @@
-function[fas_thres, super_obj, deep_obj, th_apo] = filter_usimage(data,parms)
+function[fas_thres, super_obj, deep_obj] = filter_usimage(data,parms)
 
 % Determine size
 [n,m] = size(data);
