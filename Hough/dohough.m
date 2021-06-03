@@ -47,14 +47,14 @@ yc = r(1) + r(1)*sin(th);
 idx = inpolygon(X(:),Y(:),xc',yc);
 fascicle_cut = fascicle;
 fascicle_cut(~idx) = 0;
-fascicle_filt = bwpropfilt(fascicle_cut,'Orientation',parms.range);
+% fascicle_filt = bwpropfilt(fascicle_cut,'Orientation',parms.range);
 
 % fascicle_filt = edge(fascicle_filt);
 % fascicle_cut
 
 %% Determine alpha
 % hough transform
-[hmat,theta,rho] = hough(fascicle_filt,'RhoResolution',parms.rhores,'Theta',fasangles);
+[hmat,theta,rho] = hough(fascicle_cut,'RhoResolution',parms.rhores,'Theta',fasangles);
 
 % angle of the line itself
 gamma = 90 - theta; % with horizontal
