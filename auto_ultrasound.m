@@ -1,4 +1,4 @@
-function[alpha, betha, thickness, faslen,super_aponeurosis_vector,deep_aponeurosis_vector] = auto_ultrasound(data,parms)
+function[alphas, betha, thickness, faslen,super_aponeurosis_vector,deep_aponeurosis_vector] = auto_ultrasound(data,parms)
 
 [n,m] = size(data);
 parms.apo.apox = round(linspace(parms.apo.apomargin, m-parms.apo.apomargin, parms.apo.napo));
@@ -28,7 +28,8 @@ else
 end
 
 % Fascicle (Hough)
-alpha = dohough_v2(fascut,parms.fas);
+alphas = dohough(fascut,parms.fas);
+alpha = median(alphas);
 
 %% Step 3: Variables extraction
 % First order fit through vectors
