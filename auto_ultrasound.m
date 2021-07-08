@@ -1,10 +1,10 @@
-function[alphas, betha, thickness, faslen,super_aponeurosis_vector,deep_aponeurosis_vector] = auto_ultrasound(data,parms)
+function[geofeatures, apovecs] = auto_ultrasound(ultrasound_image,parms)
 
-[n,m] = size(data);
+[n,m] = size(ultrasound_image);
 parms.apo.apox = round(linspace(parms.apo.apomargin, m-parms.apo.apomargin, parms.apo.napo));
 
 %% Step 1: Filtering
-[fascicle, super_obj, deep_obj] = filter_usimage(data,parms);
+[fascicle, super_obj, deep_obj] = filter_usimage(ultrasound_image,parms);
 
 %% Step 2: Feature detection
 super_aponeurosis_raw = apo_func(super_obj, parms.apo);
@@ -60,7 +60,7 @@ faslen = thickness ./ sind(alpha-betha);
 %% Plot figure
 if parms.show
     
-    make_us_figure(data, deep_aponeurosis_vector, super_aponeurosis_vector, alpha, super_coef, deep_coef, parms)
+    make_us_figure(ultrasound_image, deep_aponeurosis_vector, super_aponeurosis_vector, alpha, super_coef, deep_coef, parms)
   
 end
     %% Plot fascicle length and thickness vs. longitudinal position
@@ -85,5 +85,16 @@ end
 if isnan(betha)
     disp('Not able to find aponeuroses, try changing the parameters')
 end
+
+%% Assign output
+geofeatures.alphas = alphas;
+geofeatures.betha = betha;
+geofeatures.thickness = thickness;
+geofeatures.faslen = faslen;
+geofeatures.alpha = alpha;
+
+apovecs.super_aponeurosis_vector = super_aponeurosis_vector;
+apovecs.deep_aponeurosis_vector = deep_aponeurosis_vector;
+
 
 end

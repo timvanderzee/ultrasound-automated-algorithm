@@ -7,14 +7,17 @@ addpath(genpath(cd))
 load('parms.mat')
 
 % Load image
-load('Data\example_ultrasound_image.mat');
+% load('Example images\example_ultrasound_image.mat');
+load('Example images\example_ultrasound_image4.mat');
 
 %% Determine alpha, beta, thickness
-[alpha, betha, thickness] = auto_ultrasound(data,parms);
+parms.apo.deep.order = 2;
+parms.extrapolation = 0;
+geofeatures = auto_ultrasound(data,parms);
 
 %% Determine fascicle length and pennation angle
-phi = alpha - betha;
-thickness_cm = thickness / pixtocm;
+phi = geofeatures.alpha - geofeatures.betha;
+thickness_cm = geofeatures.thickness / pixtocm;
 faslen = thickness_cm ./ sind(phi);
 
 disp(['Fascicle length = ', num2str(round(faslen,2)), ' cm'])
