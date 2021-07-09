@@ -30,6 +30,14 @@ line('xdata',-m:2*m, 'ydata', polyval(deep_coef,-m:2*m),'linewidth',1, 'linestyl
 line('xdata',parms.apo.apox, 'ydata', deep_aponeurosis_vector,'linestyle','none','marker','o','markersize',10,'markeredgecolor',color(5,:).^5,'markerfacecolor',color(5,:))
 line('xdata',parms.apo.apox, 'ydata', super_aponeurosis_vector,'linestyle','none','marker','o','markersize',10,'markeredgecolor',color(6,:).^5,'markerfacecolor',color(6,:))
 
+% draw elippse
+fascut = data(round(mean(super_aponeurosis_vector,'omitnan')):round(mean(deep_aponeurosis_vector,'omitnan')),:);
+r = size(fascut)/2;
+th = linspace(0,2*pi) ;
+xc = (r(2)*parms.fas.w_ellipse_rel) + (r(2)*parms.fas.w_ellipse_rel)*cos(th) ; 
+yc = r(1) + r(1)*sin(th) +  round(mean(super_aponeurosis_vector,'omitnan'));
+
+line('xdata',xc, 'ydata', yc,'linestyle','--','color','red')
 
 % axis([-2*m 2*m -2*m 2*m]);
 % axis equal
