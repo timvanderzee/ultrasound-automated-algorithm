@@ -16,15 +16,21 @@ color = get(gca,'colororder');
 [m,n,p] = size(data);
 
 % zero padding
-data_padded = [ones(m,n,p) data ones(m,n,p)];
-imshow(data_padded,'xdata',[-n 2*n], 'ydata',[1 m]);
-
+if parms.padding
+    data_padded = [ones(m,n,p) data ones(m,n,p)];
+    imshow(data_padded,'xdata',[-n 2*n], 'ydata',[1 m]);
+    x = -n:2*n;
+else
+    imshow(data);
+    x = 0:n;
+end
+    
 % the chosen one
 line('xdata', parms.apo.x + [0 faslen*cosd(alpha)], 'ydata', polyval(deep_coef, parms.apo.x) - [0 faslen*sind(alpha)],'color','Red', 'linewidth',2)
 
 % fitted aponeuroses
-line('xdata',-m:2*m, 'ydata', polyval(super_coef,-m:2*m),'linewidth',1, 'linestyle','-','color', color(6,:));
-line('xdata',-m:2*m, 'ydata', polyval(deep_coef,-m:2*m),'linewidth',1, 'linestyle','-','color', color(5,:));
+line('xdata',x, 'ydata', polyval(super_coef,x),'linewidth',1, 'linestyle','-','color', color(6,:));
+line('xdata',x, 'ydata', polyval(deep_coef,x),'linewidth',1, 'linestyle','-','color', color(5,:));
 
 % aponeurosis vectors
 line('xdata',parms.apo.apox, 'ydata', deep_aponeurosis_vector,'linestyle','none','marker','o','markersize',10,'markeredgecolor',color(5,:).^5,'markerfacecolor',color(5,:))

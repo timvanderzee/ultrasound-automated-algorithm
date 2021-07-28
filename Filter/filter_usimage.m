@@ -3,6 +3,8 @@ function[fas_thres, super_obj, deep_obj] = filter_usimage(data,parms)
 % Determine size
 [n,m] = size(data);
 
+data(data == 0) = mean(data(:));
+
 % Frangi Filter
 apo_filt = FrangiFilter2D(double(data), parms.apo.frangi); % filtered aponeurosis image
 fas_filt = FrangiFilter2D(double(data), parms.fas.frangi);  % filtered fascicle image

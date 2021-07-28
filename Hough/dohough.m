@@ -1,4 +1,4 @@
-function[alphas] = dohough(fascicle,parms)
+function[alphas, ws] = dohough(fascicle,parms)
 
 % This function finds the muscle fascicle angle (alpha) 
 % given the filtered image (fascicle) and parameters (parms)
@@ -36,7 +36,7 @@ fasangles = anglerange(1):parms.thetares:anglerange(2);
 %% Cut out ellipse
 r = size(fascicle)/2;
 % r(2) = r(1);
-th = linspace(0,2*pi) ;
+th = linspace(0,2*pi);
 xc = (r(2)*parms.w_ellipse_rel) + (r(2)*parms.w_ellipse_rel)*cos(th) ; 
 % xc = r(2) + r(2)*cos(th); 
 yc = r(1) + r(1)*sin(th); 
@@ -60,7 +60,7 @@ fascicle_cut(~idx) = 0;
 gamma = 90 - theta; % with horizontal
 
 % relative radius of the ellipse
-r_ellipse_rel = r(1) ./ sqrt(r(1)^2*cosd(gamma).^2 + r(2)^2*sind(gamma).^2);
+r_ellipse_rel = r(1) ./ sqrt(r(1)^2*cosd(gamma).^2 + (r(2)*parms.w_ellipse_rel)^2*sind(gamma).^2);
 
 % correct for relative radius
 hmat_cor = round(hmat ./ repmat(r_ellipse_rel, size(hmat,1),1));
@@ -87,17 +87,11 @@ P = houghpeaks(hmat_cor,parms.npeaks,'Threshold',0);
 
 % extract angles corresponding to peaks
 alphas = gamma(P(:,2));
-% gamma_sels = sort(gamma_sel);
-% alpha = median(gamma_sels(3:end));
 
-% alpha = prctile(gamma_sel, 75);
-
-% % alpha: median of selected angles
-% for i = 1:(length(gamma_sel)-1)
-%     alphas(i) = median(gamma_sel(1:end-i));
-% end
-% 
-% alpha = median(alphas);
+ws = nan(size(alphas));
+for i = 1:length(P)
+    ws(i) = hmat_cor(P(i,1),P(i,2));
+end
     
 
 %% Old method

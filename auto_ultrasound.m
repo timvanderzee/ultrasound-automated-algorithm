@@ -28,16 +28,18 @@ else
 end
 
 % Fascicle (Hough)
-alphas = dohough(fascut,parms.fas);
+[alphas,ws] = dohough(fascut,parms.fas);
 alpha = median(alphas);
 
 %% Step 3: Variables extraction
-% First order fit through vectors
-parms.apo.super.order = 1; % force 1st order, otherwise betha is ill-defined
+% Fit through vectors
 super_coef = fit_apo(parms.apo.apox(isfinite(super_aponeurosis_vector)),super_aponeurosis_vector(isfinite(super_aponeurosis_vector)),parms.apo.super);
 deep_coef = fit_apo(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_aponeurosis_vector(isfinite(deep_aponeurosis_vector)),parms.apo.deep);
 
-betha = -atan2d(super_coef(1),1);
+parms.apo.super.order = 1; % force 1st order, otherwise betha is ill-defined
+super_coef_lin = fit_apo(parms.apo.apox(isfinite(super_aponeurosis_vector)),super_aponeurosis_vector(isfinite(super_aponeurosis_vector)),parms.apo.super);
+betha = -atan2d(super_coef_lin(1),1);
+
 % if extrapolation mode choose width location to minimize amount of
 % extrapolation on each side
 if parms.extrapolation
@@ -61,7 +63,7 @@ faslen = thickness ./ sind(alpha-betha);
 if parms.show
     
     make_us_figure(ultrasound_image, deep_aponeurosis_vector, super_aponeurosis_vector, alpha, super_coef, deep_coef, parms)
-  
+   
 end
     %% Plot fascicle length and thickness vs. longitudinal position
 if parms.show2
@@ -92,6 +94,7 @@ geofeatures.betha = betha;
 geofeatures.thickness = thickness;
 geofeatures.faslen = faslen;
 geofeatures.alpha = alpha;
+geofeatures.ws = ws;
 
 apovecs.super_aponeurosis_vector = super_aponeurosis_vector;
 apovecs.deep_aponeurosis_vector = deep_aponeurosis_vector;
