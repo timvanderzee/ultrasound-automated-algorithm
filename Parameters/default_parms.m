@@ -18,7 +18,8 @@ parms.apo.ntraining = 4;
 
 parms.apo.deep.method = 'longest';
 parms.apo.super.method = 'longest';
-
+parms.apo.fillgap = 50;
+parms.apo.filter_method = 'multiply';
 
 %% Filtering parameters
 % These parameters are used in the function filter_usimage
@@ -50,7 +51,7 @@ parms.fas.frangi.BlackWhite = 0;
 parms.fas.frangi.FrangiScaleRatio = 1;
 parms.fas.frangi.verbose = false;
 parms.fas.th = .5;
-parms.fas.w_ellipse_rel = .8;
+parms.fas.w_ellipse_rel = 1;
 
 %% Aponeurosis select parameters
 % These parameters are used in the function apo_func
@@ -62,7 +63,7 @@ parms.apo.x = parms.apo.apomargin;
 %% Fascicle selection
 % Hough parameters
 parms.fas.npeaks = 10; % amount of Hough angles included in weighted average
-parms.fas.range = [10 80]; % fascicle angles considered (deg)
+parms.fas.range = [8 80]; % fascicle angles considered (deg)
 parms.fas.thetares = 1;
 parms.fas.rhores = 1;
 parms.fas.houghangles = 'manual';

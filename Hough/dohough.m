@@ -1,4 +1,4 @@
-function[alphas] = dohough(fascicle,parms)
+function[alphas, w] = dohough(fascicle,fat_thickness,parms)
 
 % This function finds the muscle fascicle angle (alpha) 
 % given the filtered image (fascicle) and parameters (parms)
@@ -35,22 +35,19 @@ fasangles = anglerange(1):parms.thetares:anglerange(2);
 
 %% Cut out ellipse
 r = size(fascicle)/2;
-% r(2) = r(1);
-th = linspace(0,2*pi) ;
-xc = (r(2)*parms.w_ellipse_rel) + (r(2)*parms.w_ellipse_rel)*cos(th) ; 
-% xc = r(2) + r(2)*cos(th); 
-yc = r(1) + r(1)*sin(th); 
-% plot(xc,yc,'r');
+th = linspace(0,2*pi);
+
+% ellipse radius
+re = [r(1), (r(2)*parms.w_ellipse_rel)];
+
+xc = re(2) + re(2)*cos(th) ; 
+yc = re(1) + re(1)*sin(th); 
 
 [nx,ny] = size(fascicle) ;
 [X,Y] = meshgrid(1:ny,1:nx) ;
 idx = inpolygon(X(:),Y(:),xc',yc);
 fascicle_cut = fascicle;
 fascicle_cut(~idx) = 0;
-% fascicle_filt = bwpropfilt(fascicle_cut,'Orientation',parms.range);
-
-% fascicle_filt = edge(fascicle_filt);
-% fascicle_cut
 
 %% Determine alpha
 % hough transform
@@ -60,130 +57,31 @@ fascicle_cut(~idx) = 0;
 gamma = 90 - theta; % with horizontal
 
 % relative radius of the ellipse
-r_ellipse_rel = r(1) ./ sqrt(r(1)^2*cosd(gamma).^2 + r(2)^2*sind(gamma).^2);
+r_ellipse_rel = re(1) ./ sqrt(re(1)^2*cosd(gamma).^2 + re(2)^2*sind(gamma).^2);
 
 % correct for relative radius
 hmat_cor = round(hmat ./ repmat(r_ellipse_rel, size(hmat,1),1));
 
 % determine peaks
-P = houghpeaks(hmat_cor,parms.npeaks,'Threshold',0);
-% 
-% 
-% % optional figure
-%        figure(1), imshow(fascicle_filt), hold on
-%        color = get(gca,'colororder');
-% for i = 1:parms.npeaks
-% Ps = houghpeaks(hmat_cor,parms.npeaks+1-i);
-% 
-%        lines = houghlines(fascicle_filt,theta,rho,Ps,'FillGap',5,'MinLength',7);
-% 
-% 
-%        for k = 1:length(lines)
-%          xy = [lines(k).point1; lines(k).point2];
-%          plot(xy(:,1),xy(:,2),'LineWidth',2,'color',color(i,:));
-%        end
-% 
-% end
+P = houghpeaks(hmat_cor, parms.npeaks,'Threshold',0);
 
 % extract angles corresponding to peaks
+w = nan(1,length(P));
+for i = 1:length(P)
+    w(i) = hmat_cor(P(i,1),P(i,2));
+end
+
 alphas = gamma(P(:,2));
-% gamma_sels = sort(gamma_sel);
-% alpha = median(gamma_sels(3:end));
 
-% alpha = prctile(gamma_sel, 75);
+%% Optional figure: see which pixels contribute
+% Most dominant line is green, least dominant is blue, intermediate are in between green and blue 
+colors = [ones(parms.npeaks,1) linspace(0,1,parms.npeaks)', linspace(0,1,parms.npeaks)'];
 
-% % alpha: median of selected angles
-% for i = 1:(length(gamma_sel)-1)
-%     alphas(i) = median(gamma_sel(1:end-i));
-% end
-% 
-% alpha = median(alphas);
+Ps = houghpeaks(hmat_cor,parms.npeaks);
+line('xdata',xc,'ydata',yc + fat_thickness,'linestyle','--','color','red');
+for i = 1:parms.npeaks    
+    [y,x] = find(hough_bin_pixels(fascicle_cut, theta, rho, Ps(i,:)));
+    line('xdata',x,'ydata',y + fat_thickness,'linestyle','none','marker','.', 'color',colors(i,:));
+end
     
-
-%% Old method
-% for i = 1:length(P)
-%     hpeaks(i) = hmat(P(i,1),P(i,2));
-% end
-% 
-% for i = 1:size(hmat,2)
-%     [hmax(i), imax(i)] = max(hmat(:,i));
-% end
-
-% hmaxrel = hmax./r_ellipse;
-
-% [hnmax,maxid] = sort(hmaxrel,'descend');
-% hnmaxrel = hnmax - mean(hmaxrel);
-% alpha = dot(gamma(maxid(1:parms.npeaks)), hnmaxrel(1:parms.npeaks)) / sum(hnmaxrel(1:parms.npeaks));
-    
-%% Figures
-% figure
-% imshow(imadjust(rescale(hmat)),'XData',theta,'YData',rho,...
-%       'InitialMagnification','fit');
-% 
-% xlabel('\theta'), ylabel('\rho');
-% axis on, axis normal;
-% colormap(gca,hot);
-% 
-% ylim([0 500])
-%        
-% 
-% figure
-% imshow(imadjust(rescale(hmat_cor)),'XData',gamma,'YData',rho,...
-%       'InitialMagnification','fit');
-% 
-% xlabel('\gamma'), ylabel('\gamma');
-% axis on, axis normal;
-% colormap(gca,hot);
-% 
-% hold on; plot(gamma_sel, rho(P(:,1)), 'o','color', color(1,:))
-% plot([alpha alpha], [0 500],'-','color',color(1,:))
-% 
-% ylim([0 500])
-
-    %% Figures
-%     % fit by polygon
-%     coef = polyfit(90-theta, mhmax,10);
-%     
-%     
-%     figure(1)
-%     plot(90-theta, hmax); hold on
-%     plot(90-theta, mhmax,'k')
-%     plot(90-theta(maxid(1:parms.npeaks)), hnmax(1:parms.npeaks), 'ko')
-%     plot([alpha alpha], [0 150], 'k')
-%     
-%     plot(90-theta, polyval(coef,90-theta));
-%     
-% % % %     
-%     figure(2)
-%     colormap hot
-%     surf(theta, rho, hmat,'Edgecolor','none'); hold on
-%      ylim([0 400])    
-% %     xticklabels(''); yticklabels(''); zticklabels('');
-%     
-%     figure(3)
-%     colormap hot
-%     surf(gamma, rho, hmat_cor,'Edgecolor','none'); hold on
-%     ylim([0 400])    
-% %     xticklabels(''); yticklabels(''); zticklabels('');
-% 
-% for i = 1:length(gamma_sel)
-%     plot3(gamma_sel(i), rho(P(i,1)), hmat_cor(P(i,1),P(i,2)), 'o','color', color(1,:),'markerfacecolor',color(1,:))
-% end
-% 
-
-%% 2D version
-% figure;
-%        imshow(imadjust(rescale(hmat_cor)),'XData',rho,'YData',gamma,...
-%               'InitialMagnification','fit');
-% 
-% plot([alpha alpha], [0 400], 'color',color(1,:))
-
-%     for t = 1:length(theta)
-%         plot3(repmat(theta(t), length(rho),1), rho(:), hmat(:,t), 'color', sqrt(color(1,:)))
-%     end
-%    
-% 
-%     cd('C:\Users\Tim\OneDrive\Ultrasound')
-%     exportgraphics(gcf, 'Hough3D_3.pdf','Resolution', 500)
-
 end
