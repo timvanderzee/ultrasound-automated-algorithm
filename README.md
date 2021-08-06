@@ -5,9 +5,7 @@ This respository contains MATLAB-based code that can be used to estimate muscle 
 This algorithm is described in more detail in a [bioRxiv pre-print](https://www.biorxiv.org/content/10.1101/2020.08.23.263574v2) and has been used to estimate the mechanical work done by muscle fascicles during cyclic contraction in a [peer-reviewed study](https://journals.biologists.com/jeb/article-abstract/224/9/jeb233965/237823/The-high-energetic-cost-of-rapid-force-development?redirectedFrom=fulltext).
 
 ## Overview
-The main function is called **auto_ultrasound**, which requires a grayscale ultrasound image (*ultrasound_image*) and parameters (*parms*) as inputs and outputs geometric muscle features (*geofeatures*) and (optionally) aponeurosis vectors (*apovecs*). These inputs and outputs will be explained below. As an example, auto_ultrasound may be ran on an example processed image using default parameters by evaulating the script **example.m**. 
-
-Before **auto_ultrasound** can be ran on any new ultrasound image, the raw image needs to be processed and parameters may need to be adjusted. An example of how to process a raw image is shown in **process_ultrasound_image**, and example of how the parameters can be adjusted is shown in the live script **adjust_ultrasound_parameters**. 
+The main function is called **auto_ultrasound**, which requires a grayscale ultrasound image (*ultrasound_image*) and parameters (*parms*) as inputs and outputs geometric muscle features (*geofeatures*) and (optionally) aponeurosis vectors (*apovecs*). These inputs and outputs are explained below under "Main function: auto_ultrasound.m". As an example, **auto_ultrasound** may be ran on an example processed image using default parameters by evaluating the script **example.m**. Before **auto_ultrasound** can be ran on any new ultrasound image, the raw image needs to be processed and parameters may need to be adjusted. An example of how to process a raw image is shown in **process_ultrasound_image**; example of how the parameters can be adjusted is shown in the live script **adjust_ultrasound_parameters**. Parameters should only be set once for an entire series of images, allowing rapid image analysis (~ 1s per image with an 'avenrage' processor). In our [bioRxiv pre-print](https://www.biorxiv.org/content/10.1101/2020.08.23.263574v2), we used the same set of parameters on our entire data set, which included images from two different muscles (gastrocnemius lateralis and vastus lateralis), three different movements (isometric contraction, jumping and range-of-motion), from nine different human subjects. An example of using the same set of parameters on a series of ultrasound images is also shown in **example.m**. If the image series is in chronological order and captured at moderate-to-high rates (i.e. ~5 Hz or higher), we recommend low-pass filtering the time-series to reduce random noise.  
 
 ![picture](example_of_analyzed_image.jpg)
 
@@ -36,7 +34,7 @@ Before **auto_ultrasound** can be ran on any new ultrasound image, the raw image
 
 ## Parameters
 
-Contains default parameters *parms.mat* and a script to create these *default_parms.m*
+Contains default parameters *parms.mat* and a script to create these *default_parms.m*. Parameters specific to a certain image can be created through running  **adjust_ultrasound_parameters**, which saves its output in this folder. For example "parms_for_example_ultrasound_image.mat" contains the parameters specific to the image "example_ultrasound_image".
 
 ## Example images
 
@@ -65,5 +63,8 @@ Contains example data
 * Ultrasound device: General Electric Logiq E9
 * Facility: University of Calgary, Canada
 * Investigator: Tim van der Zee
+
+## Contact
+The code has been developed for MATLAB version 2020a. I aim to make it compatible with other versions as well in the future. Please let me know if you run into issues with your MATLAB version and I can make adjustments. 
 
 For questions, please email me: tim.vanderzee@ucalgary.ca

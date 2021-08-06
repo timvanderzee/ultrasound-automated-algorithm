@@ -1,16 +1,17 @@
 function[geofeatures, apovecs] = auto_ultrasound(ultrasound_image,parms)
 
-[n,m] = size(ultrasound_image);
+[n,m,p] = size(ultrasound_image);
+
 parms.apo.apox = round(linspace(parms.apo.apomargin, m-parms.apo.apomargin, parms.apo.napo));
 
 %% Step 1: Filtering
 [fascicle, super_obj, deep_obj] = filter_usimage(ultrasound_image,parms);
 
 %% Step 2: Feature detection
-super_aponeurosis_raw = apo_func(super_obj, parms.apo);
 deep_aponeurosis_raw = n - (apo_func(flip(deep_obj), parms.apo));
+super_aponeurosis_raw = apo_func(super_obj, parms.apo);
 
-% % Correct for width of Gaussian kernel
+% Correct for width of Gaussian kernel
 super_aponeurosis_vector = super_aponeurosis_raw - .5*parms.apo.sigma;
 deep_aponeurosis_vector = deep_aponeurosis_raw + .5*parms.apo.sigma;
 
@@ -20,16 +21,24 @@ apox_extrap = (parms.apo.apomargin-delta_apo*parms.apo.nextrap):delta_apo:(parms
 
 %% Step 2b: Fascicle angle detection
 % Determine fascicle region using detected aponeuroses
+fat_thickness = round(mean(super_aponeurosis_vector,'omitnan'));
+
 if isfinite(mean(deep_aponeurosis_vector,'omitnan')) && isfinite(mean(super_aponeurosis_vector,'omitnan'))
-    fascut = fascicle(round(mean(super_aponeurosis_vector,'omitnan')):round(mean(deep_aponeurosis_vector,'omitnan')),:);
+    fascut = fascicle(fat_thickness:round(mean(deep_aponeurosis_vector,'omitnan')),:);
 else
     fascut = fascicle;
     disp('Warning: no aponeurosis object');
 end
 
+if parms.show
+    % zero padding
+    data_padded = [ones(n,m,p) ultrasound_image ones(n,m,p)];
+    imshow(data_padded,'xdata',[-m 2*m], 'ydata',[1 n]);
+end
+
 % Fascicle (Hough)
-[alphas,ws] = dohough(fascut,parms.fas);
-alpha = median(alphas);
+[alphas,ws] = dohough(fascut,fat_thickness, parms.fas);
+alpha = weightedMedian(alphas,ws);
 
 %% Step 3: Variables extraction
 % Fit through vectors
