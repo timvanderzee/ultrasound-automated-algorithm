@@ -11,7 +11,7 @@ load('parms.mat')
 
 %% Example 1: single image (vastus lateralis, resting)
 imagename = 'example_ultrasound_image.mat';
-load(['Example images\', imagename]);
+load(['Example images\single_images\', imagename]);
 
 % Determine alpha, beta, thickness
 figure(1); geofeatures = auto_ultrasound(data,parms);
@@ -26,7 +26,7 @@ disp(['Pennation angle = ', num2str(round(phi,2)), ' deg'])
 
 %% Example 2: video of multiple images (gastrocnemius lateralis, jumping)
 parms.extrapolation = 0;
-cd([mainfolder,'Example images\jumping'])
+cd([mainfolder,'Example images\video\jumping'])
 files = dir('*png');
 
 % load manual estimates and pixel-to-centimeter ratio
@@ -104,7 +104,7 @@ c2 = polyfit(time(:), mean(faslen_manual_gastroc_jumping_cm,2), 10);
 plot(linspace(0, time(end), 100), polyval(c2,  linspace(0, time(end), 100)), 'color', color(2,:))
 
 %% Example 3: video of multiple images (gastrocnemius lateralis, range-of-motion)
-cd([mainfolder,'Example images\range-of-motion'])
+cd([mainfolder,'Example images\video\range-of-motion'])
 files = dir('*png');
 
 % load manual estimates and pixel-to-centimeter ratio

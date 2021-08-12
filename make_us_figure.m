@@ -8,6 +8,8 @@ betha = -atan2d(super_coef(1),1);
 thickness = (polyval(deep_coef,parms.apo.x) - polyval(super_coef,parms.apo.x)) * cosd(betha);
 faslen = thickness ./ sind(alpha-betha);
 
+x = min(parms.apo.apox):max(parms.apo.apox);
+
 %% make figure
 color = get(gca,'colororder');
 
