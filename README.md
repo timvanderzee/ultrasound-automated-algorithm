@@ -14,8 +14,8 @@ The inputs and outputs of the **auto_ultrasound** are explained below under "Mai
 
 Note: before **auto_ultrasound** can be ran on any new ultrasound image, the raw image needs to be processed and parameters may need to be adjusted. An example of how to process a raw image is shown in **process_ultrasound_image**; an example of how the parameters can be adjusted is shown in the live script **adjust_ultrasound_parameters**. Parameters should only be set once for an entire series of images, allowing rapid image analysis (~ 1s per image with an 'avenrage' processor). In our [bioRxiv pre-print](https://www.biorxiv.org/content/10.1101/2020.08.23.263574v2), we used the same set of parameters on our entire data set, which includes images from two different muscles (gastrocnemius lateralis and vastus lateralis), three different movements (isometric contraction, jumping and range-of-motion), from nine different human subjects. An example of using the same set of parameters on a series of ultrasound images is also shown in **example.m**. If the image series is in chronological order and captured at moderate-to-high rates (i.e. ~5 Hz or higher), we recommend low-pass filtering the time-series to reduce random noise. Similarly, aponeurosis vectors (*apovecs*) may be interpolated post-hoc using **correct_aponeuroses**, which we recommend for image sequences with occlusion (e.g. due to probe losing contact with skin).
 
-![picture](example_of_analyzed_image_new.jpg)
-**Figure**: fitted superficial aponeurosis (blue), deep aponeurosis (green) and representative fascicle (red solid). Pixels that contribute to the representative are shown in red-white colors, with redder colors contributing more than whiter colors. Dashed red line indicates the elipsoid region for fascicle detection
+![picture](gastroc_jumping_timtrack.gif)
+**Figure: Gastrocnemius lateralis during jump.** Fitted superficial aponeurosis (blue), deep aponeurosis (green) and representative fascicle (red solid). Pixels that contribute to the representative are shown in red-white colors, with redder colors contributing more than whiter colors. Dashed red line indicates the elipsoid region for fascicle detection
 
 ## Main function: auto_ultrasound.m
 [geofeatures, apovecs] = auto_ultrasound(ultrasound_image,parms)
@@ -76,9 +76,9 @@ Contains the following single images:
 **Video**
 Contains image sequences (i.e. "video") collected by Tim van der Zee on Gastrocnemius Lateralis using General Electric Logiq E9 at University of Calgary, Canada. These images were collected at 30 Hz and downsampled to fit GitHubs file size limits. The estimated geometric muscle features are compared to estimates from manual observers, and to estimates from a state-of-the-art optic flow algorithm called **UltraTrack** (see [bioRxiv pre-print](https://www.biorxiv.org/content/10.1101/2020.08.23.263574v2) for more detail). Note: UltraTrack estimates were performed on the original data (30 Hz), and estimates were downsampled. Manual estimates and TimTrack estimates were performed on the downsampled data. 
 
-![picture](gastroc_jumping_timtrack.gif)
-
 ![picture](TimTrack_vs_manual_vs_UltraTrack.jpg)
+
+**Figure: TimTrack vs. manual vs. UltraTrack for gastrocnemius lateralis during jump and slow range-of-motion movement**
 
 ## Contact
 The code has been tested for MATLAB versions 2016a and 2020a. I aim to make it compatible with other versions as well in the future. Please let me know if you run into issues with your MATLAB version and I can make adjustments. 
