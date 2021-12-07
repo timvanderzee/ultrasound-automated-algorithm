@@ -59,6 +59,9 @@ gamma = 90 - theta; % with horizontal
 % relative radius of the ellipse
 r_ellipse_rel = re(1) ./ sqrt(re(1)^2*cosd(gamma).^2 + re(2)^2*sind(gamma).^2);
 
+% correct for diagonal bias
+r_ellipse_rel(gamma==45) = 1;
+
 % correct for relative radius
 hmat_cor = round(hmat ./ repmat(r_ellipse_rel, size(hmat,1),1));
 
@@ -74,14 +77,16 @@ end
 alphas = gamma(P(:,2));
 
 %% Optional figure: see which pixels contribute
-% Most dominant line is green, least dominant is blue, intermediate are in between green and blue 
-colors = [ones(parms.npeaks,1) linspace(0,1,parms.npeaks)', linspace(0,1,parms.npeaks)'];
-
-Ps = houghpeaks(hmat_cor,parms.npeaks);
-line('xdata',xc,'ydata',yc + fat_thickness,'linestyle','--','color','red');
-for i = 1:parms.npeaks    
-    [y,x] = find(hough_bin_pixels(fascicle_cut, theta, rho, Ps(i,:)));
-    line('xdata',x,'ydata',y + fat_thickness,'linestyle','none','marker','.', 'color',colors(i,:));
+if parms.show
+    % Most dominant line is green, least dominant is blue, intermediate are in between green and blue 
+    colors = [ones(parms.npeaks,1) linspace(0,1,parms.npeaks)', linspace(0,1,parms.npeaks)'];
+    
+    Ps = houghpeaks(hmat_cor,parms.npeaks);
+    line('xdata',xc,'ydata',yc + fat_thickness,'linestyle','--','color','red');
+    for i = 1:parms.npeaks    
+        [y,x] = find(hough_bin_pixels(fascicle_cut, theta, rho, Ps(i,:)));
+        line('xdata',x,'ydata',y + fat_thickness,'linestyle','none','marker','.', 'color',colors(i,:));
+    end
 end
     
 end

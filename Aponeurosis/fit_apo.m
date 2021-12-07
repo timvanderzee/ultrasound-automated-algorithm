@@ -4,8 +4,7 @@ if parms.order == 1
     A = [-1 0];
     B = tand(parms.maxangle);
 
-    options = optimoptions('fmincon','Display','none');
-    coef = fmincon(@(p) costfun(p, apox, apoy), [1; 1], A, B,[],[],[],[],[],options);
+    coef = fmincon(@(p) costfun(p, apox, apoy), [1; 1], A, B,[],[],[],[],[], optimoptions('fmincon','Display','none'));
 
     % figure
     % 
