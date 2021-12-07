@@ -48,6 +48,7 @@ deep_coef = fit_apo(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_apone
 parms.apo.super.order = 1; % force 1st order, otherwise betha is ill-defined
 super_coef_lin = fit_apo(parms.apo.apox(isfinite(super_aponeurosis_vector)),super_aponeurosis_vector(isfinite(super_aponeurosis_vector)),parms.apo.super);
 betha = -atan2d(super_coef_lin(1),1);
+gamma = -atan2d(deep_coef(1),1);
 
 % if extrapolation mode choose width location to minimize amount of
 % extrapolation on each side
@@ -99,6 +100,7 @@ end
 
 %% Assign output
 geofeatures.alphas = alphas;
+geofeatures.gamma = gamma;
 geofeatures.betha = betha;
 geofeatures.thickness = thickness;
 geofeatures.faslen = faslen;
