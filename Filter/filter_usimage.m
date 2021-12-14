@@ -3,15 +3,26 @@ function[fas_thres, super_obj, deep_obj] = filter_usimage(data,parms)
 % Determine size
 [n,m] = size(data);
 
-data(data == 0) = mean(data(:));
+% Attempt to avoid boundary effects (neccesary?)
+% data(data == 0) = mean(data(:));
 
+%% Aponeurosis
+if strcmp(parms.apo.method,'Frangi')
+    % Frangi Filter
+    apo_filt = FrangiFilter2D(double(data), parms.apo.frangi); % filtered aponeurosis image
+
+    % Aponeurosis objects from object detection
+    super_obj = get_apo_obj(data, apo_filt, parms.apo.super.cut, parms.apo); % superficial aponeurosis object
+    deep_obj = get_apo_obj(data, apo_filt, parms.apo.deep.cut, parms.apo); % deep aponeurosis object
+
+elseif strcmp(parms.apo.method, 'Hough')
+    % Aponeurosis objects from Hough lines
+    super_obj = get_apo_line(data, parms.apo.super.cut, parms.apo); % superficial aponeurosis object
+    deep_obj = get_apo_line(data, parms.apo.deep.cut, parms.apo); % superficial aponeurosis object
+end
+%% Fascicle
 % Frangi Filter
-apo_filt = FrangiFilter2D(double(data), parms.apo.frangi); % filtered aponeurosis image
 fas_filt = FrangiFilter2D(double(data), parms.fas.frangi);  % filtered fascicle image
-
-% Aponeurosis objects
-super_obj = get_apo_obj(data, apo_filt, parms.apo.super.cut, parms.apo); % superficial aponeurosis object
-deep_obj = get_apo_obj(data, apo_filt, parms.apo.deep.cut, parms.apo); % deep aponeurosis object
 
 % Fascicle image
 fas_thres = imbinarize(fas_filt,'adaptive','sensitivity', parms.fas.th); % threshold
@@ -38,7 +49,7 @@ if parms.apo.show
     set(gcf,'units','normalized','position', [.1 .3 .6 .3])
 end
 
-%% Function for aponeurosis object detection
+%% Functions for aponeurosis object detection
 function[apo_obj] = get_apo_obj(data, apo_filt, cut, parms)
     
     % for compatibility: define filter method if not already done
@@ -78,5 +89,34 @@ function[apo_obj] = get_apo_obj(data, apo_filt, cut, parms)
     end
 end
 
+function[apo_obj] = get_apo_line(data, cut, parms)
+    
+    apo_thres = imbinarize(data,'adaptive','sensitivity', parms.th); 
+    
+    apo_thres(1:round(cut(1)*n),:) = 0;  
+    apo_thres((round(cut(2)*n):end),:) = 0; 
+    
+    % angle range
+    hor_angles = parms.minangle:1:-1;
+    anglerange = sort(90-hor_angles);
+    anglerange(anglerange>90) = anglerange(anglerange>90) - 180;
 
+    
+    [H,T,R] = hough(apo_thres,'RhoResolution',0.5,'Theta',anglerange);
+    P  = houghpeaks(H,1);
+    Th = 90-T(P(:,2));
+    Rh = R(P(:,1));
+
+    [y,x] = find(hough_bin_pixels(apo_thres, T, R, P(1,:)));
+    
+    % interpolate
+    xi = 1:size(data,2);
+    yi = round(interp1(x,y,xi,'linear','extrap'));
+    yi(yi>(size(data,1)-5)) = size(data,1)-5;
+    
+    apo_obj = zeros(size(data));
+    for j = 1:length(xi)
+        apo_obj(yi(j)-5:yi(j)+5,xi(j)) = 1;
+    end
+end
 end

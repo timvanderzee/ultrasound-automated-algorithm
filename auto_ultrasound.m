@@ -1,8 +1,13 @@
-function[geofeatures, apovecs] = auto_ultrasound(ultrasound_image,parms)
+function[geofeatures, apovecs, parms] = auto_ultrasound(ultrasound_image, parms)
 
+% determine size
 [n,m,p] = size(ultrasound_image);
 
 parms.apo.apox = round(linspace(parms.apo.apomargin, m-parms.apo.apomargin, parms.apo.napo));
+
+% Extrapolate deep aponeurosis
+delta_apo = mean(diff(parms.apo.apox));
+apox_extrap = (parms.apo.apomargin-delta_apo*parms.apo.nextrap):delta_apo:(parms.apo.apomargin-delta_apo);
 
 %% Step 1: Filtering
 [fascicle, super_obj, deep_obj] = filter_usimage(ultrasound_image,parms);
@@ -15,29 +20,25 @@ super_aponeurosis_raw = apo_func(super_obj, parms.apo);
 super_aponeurosis_vector = super_aponeurosis_raw - .5*parms.apo.sigma;
 deep_aponeurosis_vector = deep_aponeurosis_raw + .5*parms.apo.sigma;
 
-% Extrapolate deep aponeurosis
-delta_apo = mean(diff(parms.apo.apox));
-apox_extrap = (parms.apo.apomargin-delta_apo*parms.apo.nextrap):delta_apo:(parms.apo.apomargin-delta_apo);
-
-%% Step 2b: Fascicle angle detection
-% Determine fascicle region using detected aponeuroses
-fat_thickness = round(mean(super_aponeurosis_vector,'omitnan'));
-
-if isfinite(mean(deep_aponeurosis_vector,'omitnan')) && isfinite(mean(super_aponeurosis_vector,'omitnan'))
-    fascut = fascicle(fat_thickness:round(mean(deep_aponeurosis_vector,'omitnan')),:);
-else
-    fascut = fascicle;
-    disp('Warning: no aponeurosis object');
-end
-
+% Optional: show image
 if parms.show
-    % zero padding
-    data_padded = [ones(n,m,p) ultrasound_image ones(n,m,p)];
+    data_padded = [ones(n,m,p) ultrasound_image ones(n,m,p)];     % zero padding
     imshow(data_padded,'xdata',[-m 2*m], 'ydata',[1 n]);
 end
+%% Step 2b: Fascicle angle detection
+% new step: ellipse mask for fascicle
+if isfield(parms.fas, 'Emask') && numel(parms.fas.Emask) ~= numel(fascicle)
+    parms.fas = rmfield(parms.fas, 'Emask');
+end
+if ~isfield(parms.fas,'Emask') || parms.fas.redo_ROI
+    [parms.fas.Emask, parms.fas.Emask_radius] = get_fasMask(fascicle, super_aponeurosis_vector, deep_aponeurosis_vector, parms);
+end
 
-% Fascicle (Hough)
-[alphas,ws] = dohough(fascut,fat_thickness, parms.fas);
+% Mask
+fascicle_masked = fascicle .* parms.fas.Emask;
+
+% Hough transform
+[alphas,ws] = dohough(fascicle_masked, parms.fas);
 alpha = weightedMedian(alphas,ws);
 
 %% Step 3: Variables extraction
@@ -47,10 +48,8 @@ deep_coef = fit_apo(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_apone
 
 parms.apo.super.order = 1; % force 1st order, otherwise betha is ill-defined
 super_coef_lin = fit_apo(parms.apo.apox(isfinite(super_aponeurosis_vector)),super_aponeurosis_vector(isfinite(super_aponeurosis_vector)),parms.apo.super);
-betha = -atan2d(super_coef_lin(1),1);
-gamma = -atan2d(deep_coef(1),1);
 
-% if extrapolation mode choose width location to minimize amount of
+% Optional: extrapolate. If extrapolation mode choose width location to minimize amount of
 % extrapolation on each side
 if parms.extrapolation
     
@@ -64,16 +63,16 @@ if parms.extrapolation
     
 end
 
-% evaluate thickness and fascicle length
-thickness = (polyval(deep_coef,parms.apo.x) - polyval(super_coef,parms.apo.x)) * cosd(betha);
-faslen = thickness ./ sind(alpha-betha);
-
+% extract variables
+fat_thickness = round(mean(super_aponeurosis_vector,'omitnan'));
+betha = -atan2d(super_coef_lin(1),1);
+gamma = -atan2d(deep_coef(1),1);
+muscle_thickness = (polyval(deep_coef,parms.apo.x) - polyval(super_coef,parms.apo.x)) * cosd(betha);
+faslen = muscle_thickness ./ sind(alpha-betha);
 
 %% Plot figure
 if parms.show
-    
     make_us_figure(ultrasound_image, deep_aponeurosis_vector, super_aponeurosis_vector, alpha, super_coef, deep_coef, parms)
-   
 end
     %% Plot fascicle length and thickness vs. longitudinal position
 if parms.show2
@@ -102,7 +101,7 @@ end
 geofeatures.alphas = alphas;
 geofeatures.gamma = gamma;
 geofeatures.betha = betha;
-geofeatures.thickness = thickness;
+geofeatures.thickness = muscle_thickness;
 geofeatures.faslen = faslen;
 geofeatures.alpha = alpha;
 geofeatures.ws = ws;
