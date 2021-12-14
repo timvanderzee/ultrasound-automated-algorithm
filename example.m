@@ -26,6 +26,7 @@ disp(['Pennation angle = ', num2str(round(phi,2)), ' deg'])
 
 %% Example 2: video of multiple images (gastrocnemius lateralis, jumping)
 parms.extrapolation = 0;
+
 cd([mainfolder,'Example images\video\jumping'])
 files = dir('*png');
 
@@ -48,7 +49,7 @@ for i = 1:length(files)
 
     % analyse ultrasound image
     figure(2); 
-    geofeatures_gastoc_jumping = auto_ultrasound(data, parms); drawnow
+    [geofeatures_gastoc_jumping, apovecs, parms] = auto_ultrasound(data, parms); drawnow
     faslen_TimTrack_gastroc_jumping_cm(i,1) = geofeatures_gastoc_jumping.faslen / pixtocm_gastroc;
         
     % store gcf to write video

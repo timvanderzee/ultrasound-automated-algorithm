@@ -15,6 +15,8 @@ color = get(gca,'colororder');
 
 [m,n,p] = size(data);
 
+x = [min(parms.apo.apox):1:max(parms.apo.apox)];
+
 % the chosen one
 line('xdata', parms.apo.x + [0 faslen*cosd(alpha)], 'ydata', polyval(deep_coef, parms.apo.x) - [0 faslen*sind(alpha)],'color','Red', 'linewidth',2)
 
