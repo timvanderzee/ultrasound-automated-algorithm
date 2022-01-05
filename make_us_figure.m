@@ -13,7 +13,7 @@ x = min(parms.apo.apox):max(parms.apo.apox);
 %% make figure
 color = get(gca,'colororder');
 
-[m,n,p] = size(data);
+[n,m,p] = size(data);
 
 x = [min(parms.apo.apox):1:max(parms.apo.apox)];
 
@@ -28,6 +28,12 @@ line('xdata',x, 'ydata', polyval(deep_coef,x),'linewidth',1, 'linestyle','-','co
 line('xdata',parms.apo.apox, 'ydata', deep_aponeurosis_vector,'linestyle','none','marker','o','markersize',10,'markeredgecolor',color(5,:).^5,'markerfacecolor',color(5,:))
 line('xdata',parms.apo.apox, 'ydata', super_aponeurosis_vector,'linestyle','none','marker','o','markersize',10,'markeredgecolor',color(6,:).^5,'markerfacecolor',color(6,:))
     
+% aponeurosis region
+line('xdata',[1 m], 'ydata', [round(parms.apo.deep.cut(1)*n) round(parms.apo.deep.cut(1)*n)], 'linewidth',1, 'linestyle','--','color', color(5,:));
+line('xdata',[1 m], 'ydata', [round(parms.apo.deep.cut(2)*n) round(parms.apo.deep.cut(2)*n)], 'linewidth',1, 'linestyle','--','color', color(5,:));
+line('xdata',[1 m], 'ydata', [round(parms.apo.super.cut(1)*n) round(parms.apo.super.cut(1)*n)], 'linewidth',1, 'linestyle','--','color', color(6,:));
+line('xdata',[1 m], 'ydata', [round(parms.apo.super.cut(2)*n) round(parms.apo.super.cut(2)*n)], 'linewidth',1, 'linestyle','--','color', color(6,:));
+
 end
 
 

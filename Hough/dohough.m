@@ -40,7 +40,9 @@ fascicle_rot = imrotate(fascicle, rot_angle,'nearest', 'crop');
 [hmat_rot,~,~] = hough(fascicle_rot,'RhoResolution',parms.rhores,'Theta', 90-(45+rot_angle));
 
 % replace diagonal in original (with bias) with rotated one (without bias)
-hmat(:,theta == 45) = hmat_rot;
+if 45 < parms.range(2) && 45 > parms.range(1)
+    hmat(:,theta == 45) = hmat_rot;
+end
 
 % angle of the line itself
 gamma = 90 - theta; % with horizontal
