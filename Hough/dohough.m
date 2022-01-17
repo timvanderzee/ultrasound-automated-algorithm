@@ -42,6 +42,7 @@ fascicle_rot = imrotate(fascicle, rot_angle,'nearest', 'crop');
 % replace diagonal in original (with bias) with rotated one (without bias)
 if 45 < parms.range(2) && 45 > parms.range(1)
     hmat(:,theta == 45) = hmat_rot;
+%     hmat(:,theta == 45) = 0;
 end
 
 % angle of the line itself
@@ -57,8 +58,8 @@ hmat_cor = round(hmat ./ repmat(r_ellipse_rel, size(hmat,1),1));
 P = houghpeaks(hmat_cor, parms.npeaks,'Threshold',0);
 
 % extract angles corresponding to peaks
-w = nan(1,length(P));
-for i = 1:length(P)
+w = nan(1,size(P,1));
+for i = 1:size(P,1)
     w(i) = hmat_cor(P(i,1),P(i,2));
 end
 

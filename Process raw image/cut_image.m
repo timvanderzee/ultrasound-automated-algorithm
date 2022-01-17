@@ -9,12 +9,11 @@ for i = 1:2
     end
     
     [x,y] = ginput(1);
-    plot(x,y,'r.','markersize',20) 
 
-    
     rx(i) = round(x);
     ry(i) = round(y);
-
+    
+    plot(x,y,'r.','markersize',20) 
 end
 
 % plot lines
@@ -24,5 +23,6 @@ plot([rx(1) rx(1)], [ry(1) ry(2)],'r')
 plot([rx(2) rx(2)], [ry(1) ry(2)],'r')
 
 ROI = [rx; ry];
-    
+close;
+
 end
