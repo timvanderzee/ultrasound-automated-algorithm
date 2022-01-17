@@ -20,6 +20,7 @@ elseif strcmp(parms.apo.method, 'Hough')
     super_obj = get_apo_line(data, parms.apo.super.cut, parms.apo); % superficial aponeurosis object
     deep_obj = get_apo_line(data, parms.apo.deep.cut, parms.apo); % superficial aponeurosis object
 end
+
 %% Fascicle
 % Frangi Filter
 fas_filt = FrangiFilter2D(double(data), parms.fas.frangi);  % filtered fascicle image
@@ -115,8 +116,9 @@ function[apo_obj] = get_apo_line(data, cut, parms)
     yi(yi>(size(data,1)-5)) = size(data,1)-5;
     
     apo_obj = zeros(size(data));
+    apo_thickness = round(mean(parms.frangi.FrangiScaleRange)/2);
     for j = 1:length(xi)
-        apo_obj(yi(j)-5:yi(j)+5,xi(j)) = 1;
+        apo_obj((yi(j)-apo_thickness):(yi(j)+apo_thickness),xi(j)) = 1;
     end
 end
 end

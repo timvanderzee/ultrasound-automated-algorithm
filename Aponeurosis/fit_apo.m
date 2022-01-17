@@ -1,10 +1,10 @@
-function[coef] = fit_apo(apox, apoy, parms)
+function[coef] = fit_apo(apox, apoy, parms, fit_order)
 
 % default: unconstrained fitting
-coef = polyfit(apox,apoy, parms.order);
+coef = polyfit(apox,apoy, fit_order);
 
 % optional: find optimum fit, given constraint on max angle
-if parms.order == 1
+if fit_order == 1
     
     % calc angle of unconstrained fit to determine necessity
     fit_angle = -atan2d(coef(1),1);

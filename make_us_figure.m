@@ -8,14 +8,12 @@ betha = -atan2d(super_coef(1),1);
 thickness = (polyval(deep_coef,parms.apo.x) - polyval(super_coef,parms.apo.x)) * cosd(betha);
 faslen = thickness ./ sind(alpha-betha);
 
-x = min(parms.apo.apox):max(parms.apo.apox);
-
 %% make figure
 color = get(gca,'colororder');
 
 [n,m,p] = size(data);
 
-x = [min(parms.apo.apox):1:max(parms.apo.apox)];
+x = -round(m/2):round(1.5*m);
 
 % the chosen one
 line('xdata', parms.apo.x + [0 faslen*cosd(alpha)], 'ydata', polyval(deep_coef, parms.apo.x) - [0 faslen*sind(alpha)],'color','Red', 'linewidth',2)
@@ -34,6 +32,7 @@ line('xdata',[1 m], 'ydata', [round(parms.apo.deep.cut(2)*n) round(parms.apo.dee
 line('xdata',[1 m], 'ydata', [round(parms.apo.super.cut(1)*n) round(parms.apo.super.cut(1)*n)], 'linewidth',1, 'linestyle','--','color', color(6,:));
 line('xdata',[1 m], 'ydata', [round(parms.apo.super.cut(2)*n) round(parms.apo.super.cut(2)*n)], 'linewidth',1, 'linestyle','--','color', color(6,:));
 
+drawnow
 end
 
 
