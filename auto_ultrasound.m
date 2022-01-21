@@ -55,8 +55,8 @@ super_coef_lin = fit_apo(parms.apo.apox(isfinite(super_aponeurosis_vector)),supe
 deep_coef_lin = fit_apo(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_aponeurosis_vector(isfinite(deep_aponeurosis_vector)),parms.apo.super, 1);
 
 % don't allow positive first coefficients
-if deep_coef(1) > 0, deep_coef = deep_coef_lin;
-end
+% if deep_coef(1) > 0, deep_coef = deep_coef_lin;
+% end
 
 % Optional: extrapolate. If extrapolation mode choose width location to minimize amount of
 % extrapolation on each side
