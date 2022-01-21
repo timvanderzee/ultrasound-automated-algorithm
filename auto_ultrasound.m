@@ -14,16 +14,14 @@ apox_extrap = (parms.apo.apomargin-delta_apo*parms.apo.nextrap):delta_apo:(parms
 [fascicle, super_obj, deep_obj] = filter_usimage(ultrasound_image,parms);
 
 %% Step 2: Feature detection
-deep_aponeurosis_raw = n - (apo_func(flip(deep_obj), parms.apo));
-super_aponeurosis_raw = apo_func(super_obj, parms.apo);
-
-% Correct for width of Gaussian kernel
-if strcmp(parms.apo.method, 'Frangi')
+if strcmp(parms.apo.method,'Frangi')
+    deep_aponeurosis_raw = n - (apo_func(flip(deep_obj), parms.apo));
+    super_aponeurosis_raw = apo_func(super_obj, parms.apo);
     super_aponeurosis_vector = super_aponeurosis_raw - .5*parms.apo.sigma;
     deep_aponeurosis_vector = deep_aponeurosis_raw + .5*parms.apo.sigma;
 else
-    super_aponeurosis_vector = super_aponeurosis_raw;
-    deep_aponeurosis_vector = deep_aponeurosis_raw;
+    super_aponeurosis_vector = super_obj;
+    deep_aponeurosis_vector = deep_obj;
 end
 
 % Optional: show image
