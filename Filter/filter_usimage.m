@@ -16,9 +16,20 @@ if strcmp(parms.apo.method,'Frangi')
     deep_obj = get_apo_obj(data, apo_filt, parms.apo.deep.cut, parms.apo); % deep aponeurosis object
 
 elseif strcmp(parms.apo.method, 'Hough')
+   
+    apo_thres = imbinarize(data,'adaptive','sensitivity', parms.apo.th); 
+    
+    apo_deep = apo_thres; apo_super = apo_thres;
+    
+    apo_deep(1:round(parms.apo.deep.cut(1)*n),:) = 0;  
+    apo_deep((round(parms.apo.deep.cut(2)*n):end),:) = 0; 
+    
+    apo_super(1:round(parms.apo.super.cut(1)*n),:) = 0;  
+    apo_super((round(parms.apo.super.cut(2)*n):end),:) = 0; 
+    
     % Aponeurosis objects from Hough lines
-    super_obj = get_apo_line(data, parms.apo.super.cut, parms.apo); % superficial aponeurosis object
-    deep_obj = get_apo_line(data, parms.apo.deep.cut, parms.apo); % superficial aponeurosis object
+    super_obj = get_apo_line(apo_super, parms.apo.apox, 'super'); % superficial aponeurosis object
+    deep_obj = get_apo_line(apo_deep, parms.apo.apox, 'deep'); % deep aponeurosis object
 end
 
 %% Fascicle
@@ -90,35 +101,42 @@ function[apo_obj] = get_apo_obj(data, apo_filt, cut, parms)
     end
 end
 
-function[apo_obj] = get_apo_line(data, cut, parms)
+function[apoy] = get_apo_line(apo_thres, apox, type)
     
-    apo_thres = imbinarize(data,'adaptive','sensitivity', parms.th); 
-    
-    apo_thres(1:round(cut(1)*n),:) = 0;  
-    apo_thres((round(cut(2)*n):end),:) = 0; 
-    
-    % angle range
-    hor_angles = parms.minangle:1:-1;
-    anglerange = sort(90-hor_angles);
-    anglerange(anglerange>90) = anglerange(anglerange>90) - 180;
+    % perform Hough
+    [hmat,theta,rho] = hough(apo_thres, 'Theta',[-90:89]);
 
+    % angle of the line
+    gamma = 90 - theta; % with horizontal
     
-    [H,T,R] = hough(apo_thres,'RhoResolution',0.5,'Theta',anglerange);
-    P  = houghpeaks(H,1);
-    Th = 90-T(P(:,2));
-    Rh = R(P(:,1));
-
-    [y,x] = find(hough_bin_pixels(apo_thres, T, R, P(1,:)));
+    % determine peaks
+    P = houghpeaks(hmat, 1,'Threshold',0);
+    Rho = rho(P(1)); Theta = theta(P(2));
     
-    % interpolate
-    xi = 1:size(data,2);
-    yi = round(interp1(x,y,xi,'linear','extrap'));
-    yi(yi>(size(data,1)-5)) = size(data,1)-5;
-    
-    apo_obj = zeros(size(data));
-    apo_thickness = round(mean(parms.frangi.FrangiScaleRange)/2);
-    for j = 1:length(xi)
-        apo_obj((yi(j)-apo_thickness):(yi(j)+apo_thickness),xi(j)) = 1;
+    % evaluate dominant line
+    yi = round((Rho-apox * cosd(Theta)) ./ sind(Theta));
+        
+    apo_thres = imfill(apo_thres, 'holes');
+    apoy = nan(size(apox));
+        
+    if strcmp(type, 'super')
+        % if interpolate pixel is white, go and seek the first black pixel
+        % you encounter moving down
+        for i = 1:length(yi)
+            if apo_thres(yi(i),apox(i)) || apo_thres(yi(i)+1, apox(i))
+                apoy(i) = yi(i) + find(~apo_thres(yi(i)+1:end, apox(i)),1) - 1;
+            else, apoy(i) = yi(i);
+            end
+        end
+    elseif strcmp(type,'deep')
+        % if interpolate pixel is white, go and seek the first black pixel
+        % you encounter moving up
+        for i = 1:length(yi)
+            if apo_thres(yi(i),apox(i)) || apo_thres(yi(i)-1, apox(i))
+                apoy(i) = find(~apo_thres(1:yi(i)-1, apox(i)),1, 'last') + 1;
+            else, apoy(i) = yi(i);
+            end
+        end
     end
 end
 end
