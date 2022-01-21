@@ -69,7 +69,7 @@ for i = 1:p
 
     s = tic;
     [geofeatures(i), apovecs(i), parms] = auto_ultrasound(image_sequence_cut(:,:,i), parms);
-    geofeatures(i).analysis_duration = toc(s);
+    geofeatures(i).analysis
 
     % write image to GIF file
     if isfield(parms, 'makeGIF')
