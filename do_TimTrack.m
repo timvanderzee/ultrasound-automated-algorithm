@@ -1,8 +1,46 @@
-function[geofeatures, apovecs, parms] = do_TimTrack(image_sequence, parms)
+function[geofeatures, parms] = do_TimTrack(image_sequence, parms)
+% [geofeatures, apovecs, parms] = do_TimTrack(image_sequence, parms)
+% performs analysis on ultrasound data stored in image_sequence (string, matrix, or struct) with
+% parameters stored in parms (struct), yielding geometric muscle parameters stored
+% in geofeatures (struct) and updated parameters. do_TimTrack acts as a
+% shell around its the auto_ultrasound.m function. 
+%
+%
+% input:
+%
+% image_sequence: either (1) a string/char specifying the video file in the
+% MATLAB path to be analyzed, or (2) a matrix of size m-by-n-by-p or
+% m-by-n-by-x-by-p where m and n denote image dimensions, p denotes the
+% amount of images in the sequence (allowed to be 1 for single image) and
+% x denotes the 3 RGB colors (x = 1 for grayscale input), or (3) a struct
+% array of size 1xP specifying the images to be analyzed. The struct array
+% must be obtained with dir(*wildcard), where wildcard specifies the format
+% (e.g. png)
+%
+% parms: a parameter struct, default created in Parameters\default_parms
+%
+%
+% output:
+%
+% geofeatures: a struct contains different geometric muscle features of
+% interest, including fascicle length, pennation angle and muscle thickness
+%
+% parms: a parameter struct, default created in Parameters\default_parms
+
 
 %% Check input type
-% if string, assume that its the file name and load it
-if ischar(image_sequence) || isstring(image_sequence)
+% if struct, assume its created using dir
+if isstruct(image_sequence)
+    % read the first to get image dimensions
+    im1 = imread(image_sequence(1).name);
+    data = nan(size(im1));
+    for j = 1:length(image_sequence)
+        data(:,:,:,j) = imread(image_sequence(j).name); % load image
+    end
+    image_sequence = data;
+    
+    %if string, assume that its the file name and load it
+elseif ischar(image_sequence) || isstring(image_sequence)
     disp('Reading video file into VideoReader ...')
     v = VideoReader(image_sequence);
     disp('Reading complete')
@@ -17,14 +55,20 @@ if ischar(image_sequence) || isstring(image_sequence)
     disp('Reading complete')
 end
 
-% convert to grayscale
-q = size(image_sequence,4);
-if q > 1, image_sequence = squeeze(image_sequence(:,:,1,:));
+% if RGB, convert to grayscale
+p = size(image_sequence,4);
+if p > 1, image_sequence = squeeze(image_sequence(:,:,1,:));
 end
 
 % if not a string, assume its a m-by-n-by-p matrix
 [m,n,p] = size(image_sequence);
 
+% if double, MATLAB expects values to be in the range 0-1
+if isa(image_sequence,'double')
+    if sum(image_sequence(:) > 1) > 1
+        image_sequence = image_sequence ./ max(image_sequence(:));
+    end
+end
 %% Region-of-interest (ROI)
 % region of overall image corresponding to ultrasound image
 
