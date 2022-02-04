@@ -46,8 +46,11 @@ fas_thres(super_obj | deep_obj) = 0; % subtract aponeurosis objects
 
 %% Optional: show image
 if parms.apo.show
-    subplot(121);
-    imshow(deep_obj+super_obj+fas_thres);
+    if strcmp(parms.apo.method, 'Frangi'), imshow(deep_obj+super_obj+fas_thres);
+    else
+        apo_deep(1:round(mean(deep_obj),2),:) = 0; apo_super(round(mean(super_obj),2):end,:) = 0;
+        imshow(apo_deep + apo_super + fas_thres);
+    end
     
     color = get(gca,'colororder');
 
@@ -60,9 +63,6 @@ if parms.apo.show
     end
     title('Filtered image')
     
-    subplot(122);
-
-    set(gcf,'units','normalized','position', [.1 .3 .6 .3])
 end
 
 %% Functions for aponeurosis object detection
