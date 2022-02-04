@@ -67,9 +67,7 @@ disp('Starting TimTrack analysis ...')
 for i = 1:p 
 %     disp(i)
 
-    s = tic;
     [geofeatures(i), apovecs(i), parms] = auto_ultrasound(image_sequence_cut(:,:,i), parms);
-    geofeatures(i).analysis_duration = toc(s);
 
     % write image to GIF file
     if isfield(parms, 'makeGIF')

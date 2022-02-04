@@ -38,6 +38,10 @@ fas_filt = FrangiFilter2D(double(data), parms.fas.frangi);  % filtered fascicle 
 
 % Fascicle image
 fas_thres = imbinarize(fas_filt,'adaptive','sensitivity', parms.fas.th); % threshold
+
+if sum(size(super_obj) == size(deep_obj)) < 2
+    keyboard
+end
 fas_thres(super_obj | deep_obj) = 0; % subtract aponeurosis objects
 
 %% Optional: show image
@@ -109,13 +113,41 @@ function[apoy] = get_apo_line(apo_thres, apox, type)
     % angle of the line
     gamma = 90 - theta; % with horizontal
     
+    % rotate to avoid horizontal bias
+    rot_angle = 5; % [deg]
+    apo_thres_rot = imrotate(apo_thres, rot_angle,'nearest', 'crop');
+    [hmat_rot,~,~] = hough(apo_thres_rot,'Theta', 90-(rot_angle));
+    
+    % replace horizontal in original (with bias) with rotated one (without bias)
+    hmat(:,theta == -90) = hmat_rot;
+
     % determine peaks
     P = houghpeaks(hmat, 1,'Threshold',0);
     Rho = rho(P(1)); Theta = theta(P(2));
-    
-    % evaluate dominant line
+
     yi = round((Rho-apox * cosd(Theta)) ./ sind(Theta));
         
+    % if horizontal, need to rotate these points back
+    if Theta == -90
+        yi = -round((Rho-apox * cosd(Theta+rot_angle)) ./ sind(Theta+rot_angle));
+        
+        [n,m] = size(apo_thres);
+        center = round([m/2, n/2]);
+        Cshift = [apox - center(1); yi - center(2)];
+        R = [cosd(rot_angle) -sind(rot_angle); sind(rot_angle) cosd(rot_angle)];
+        Crot = R * Cshift;
+        Ctrans = [Crot(1,:) + center(1); Crot(2,:) + center(2)];
+
+%         % plotting
+%         plot(apox,yi); hold on
+%         plot(center(2), center(1), 'o')
+%         plot(Cshift(1,:), Cshift(2,:))
+%         plot(Crot(1,:), Crot(2,:))
+%         plot(Ctrans(1,:), Ctrans(2,:))
+
+        yi = round(Ctrans(2,:));
+    end
+
     apo_thres = imfill(apo_thres, 'holes');
     apoy = nan(size(apox));
         
