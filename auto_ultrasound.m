@@ -1,5 +1,7 @@
 function[geofeatures, apovecs, parms] = auto_ultrasound(ultrasound_image, parms)
 
+s = tic;
+
 % determine size
 [n,m,p] = size(ultrasound_image);
 image_brightness = mean(ultrasound_image(:));
@@ -106,6 +108,7 @@ geofeatures.fat_thickness = fat_thickness;
 geofeatures.ws = ws;
 geofeatures.brightness = image_brightness;
 geofeatures.extrapolated_fraction = extrapolated_fraction;
+geofeatures.analysis_duration = toc(s);
 
 apovecs.super_aponeurosis_vector = super_aponeurosis_vector;
 apovecs.deep_aponeurosis_vector = deep_aponeurosis_vector;
