@@ -25,13 +25,13 @@ The **adjust_ultrasound_parameters.mlx** live script allows changing parameter v
 ## Visualization
 TimTrack can optionally show a figure of the analyzed image, which can optionally be saved. Here is an example of such a figure:
 
-![picture](Example images/analyzed/analyzed_VL_image.jpg)
+![picture](./Example images/analyzed/analyzed_VL_image.jpg)
 **Figure: Vastus lateralis during isometric contraction.** Fitted superficial aponeurosis (blue), deep aponeurosis (green) and representative fascicle (red solid). Pixels that contribute to the representative are shown in red-white colors, with redder colors contributing more than whiter colors. Dashed red line indicates the elipsoid region for fascicle detection
 
 If the parms.makeGIF parameter is true, **do_TimTrack.m** calls on **gif.m** to create a GIF of the analysis. **gif.m** and associated functions are developed by [Chad Greene](https://www.chadagreene.com/).
 Here is an example of such a GIF: 
 
-![picture](Example images/analyzed/gastroc_jumping_timtrack.gif)
+![picture](./Example images/analyzed/gastroc_jumping_timtrack.gif)
 **Figure: Gastrocnemius lateralis during jump.** Fitted superficial aponeurosis (blue), deep aponeurosis (green) and representative fascicle (red solid). Pixels that contribute to the representative are shown in red-white colors, with redder colors contributing more than whiter colors. Dashed red line indicates the elipsoid region for fascicle detection
 
 ## Core functions: filter_usimage, apo_func and dohough
