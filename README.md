@@ -17,7 +17,7 @@ Both functions output geometric muscle features (*geofeatures*), including:
 **do_TimTrack** is more forgiving than **auto_ultrasound**, and is designed to handle multiple input types. For example, **do_TimTrack** can take the image filename as input, read in the raw image or image sequence
 and do some pre-processing before calling **auto_ultrasound**.
 In contrast, **auto_ultrasound** requires a (cropped) grayscale image formtatted as a 2-dimensional MATLAB matrix where all pixels corresponding to measured data (i.e. echo reflection intensity). 
-As an example, **auto_ultrasound** may be ran on example images using default parameters by evaluating the script **example**. 
+As an example, the TimTrack algorithm may be ran on example images using default parameters by evaluating the script **example.m**. 
 
 ## Adjusting parameters
 The **adjust_ultrasound_parameters.mlx** live script allows changing parameter values and directly testing their effect on a chosen image.
