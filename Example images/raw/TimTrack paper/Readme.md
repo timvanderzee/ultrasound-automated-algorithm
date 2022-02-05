@@ -1,4 +1,8 @@
-Here are images from 4 datasets included in the TimTrack paper. 
+# 4 datasets included in the TimTrack paper
+
+Datasets 1-2 are collected by myself, datasets 3-4 are downloaded from open source data repositories. 
+
+**Note: please cite the original sources when using datasets 3-4**
 
 **Dataset 1 (153 images)**
 
