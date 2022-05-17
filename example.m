@@ -30,12 +30,12 @@ disp(['Pennation angle = ', num2str(round(phi,2)), ' deg'])
 
 %% Example 2: video of multiple images (gastrocnemius lateralis, jumping)
 % images in .png format
-cd([mainfolder,'Example images\raw\video\jumping'])
+cd([mainfolder,'Example images\raw\TimTrack paper\dataset 2\jumping'])
 files = dir('*png');
 
 % load manual estimates and pixel-to-centimeter ratio
-load('manual_estimates_gastroc_jumping.mat');
-faslen_manual_gastroc_jumping_cm = faslen_manual /  pixtocm_gastroc;
+load('manual_estimates_LG_jump.mat');
+faslen_manual_gastroc_jumping_cm = mmfaslen /  pixtocm;
 
 % cut the ultrasound image out of total image
 parms.ROI = [115   685;    66   510];
@@ -48,7 +48,7 @@ figure(2)
 [geofeatures_gastoc_jumping, parms] = do_TimTrack(files, parms);
  
 for j = 1:length(geofeatures_gastoc_jumping)
-    faslen_TimTrack_gastroc_jumping_cm(j,1) = geofeatures_gastoc_jumping(j).faslen / pixtocm_gastroc;
+    faslen_TimTrack_gastroc_jumping_cm(j,1) = geofeatures_gastoc_jumping(j).faslen / pixtocm;
 end
 
 % plot vs. time
@@ -80,12 +80,12 @@ title('Gastrocnemius lateralis during a jump')
 
 %% Example 3: video of multiple images (gastrocnemius lateralis, range-of-motion)
 % images in .png format
-cd([mainfolder,'Example images\raw\video\range-of-motion'])
+cd([mainfolder,'Example images\raw\TimTrack paper\dataset 2\range-of-motion'])
 files = dir('*png');
 
 % load manual estimates and pixel-to-centimeter ratio
-load('manual_estimates_gastroc_range-of-motion.mat');
-faslen_manual_gastroc_ROM_cm = faslen_manual(1:length(files),:) /  pixtocm_gastroc;
+load('manual_estimates_LG_ROM.mat');
+faslen_manual_gastroc_ROM_cm = mmfaslen /  pixtocm;
 faslen_TimTrack_gastroc_ROM_cm = nan(length(files),1);
 
 % do TimTrack analysis
@@ -93,7 +93,7 @@ figure(2)
 [geofeatures_gastoc_ROM, parms] = do_TimTrack(files, parms);
  
 for j = 1:length(geofeatures_gastoc_ROM)
-    faslen_TimTrack_gastroc_ROM_cm(j,1) = geofeatures_gastoc_ROM(j).faslen / pixtocm_gastroc;
+    faslen_TimTrack_gastroc_ROM_cm(j,1) = geofeatures_gastoc_ROM(j).faslen / pixtocm;
 end
 
 % plot vs. time
@@ -123,6 +123,7 @@ RMSE_TT = round(sqrt(mean((faslen_TimTrack_gastroc_ROM_cm - mean(faslen_manual_g
 legend(['TimTrack (RMSE = ', num2str(RMSE_TT), ' cm)'],'Manual','location','best')
 title('Gastrocnemius lateralis during slow range-of-motion movement')
 
-cd([mainfolder, 'Example images\analyzed'])
-saveas(gcf,'TimTrack_vs_manual_gastrocnemius','jpg')
+%% optional: save figure
+% cd([mainfolder, 'Example images\analyzed'])
+% saveas(gcf,'TimTrack_vs_manual_gastrocnemius','jpg')
 
