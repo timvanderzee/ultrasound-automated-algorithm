@@ -12,8 +12,11 @@ load('parms.mat')
 %% Example 1: single image (vastus lateralis, resting)
 % image in .mat format (pre-processed)
 imagename = 'example_ultrasound_image.mat';
-load(['Example images\raw\single_images\', imagename]);
-
+if ismac
+    load(['Example images/raw/single_images/', imagename]);
+elseif ispc
+    load(['Example images\raw\single_images\', imagename]);
+end
 % Determine alpha, beta, thickness
 h = figure(1); geofeatures = do_TimTrack(data,parms);
 
@@ -30,7 +33,11 @@ disp(['Pennation angle = ', num2str(round(phi,2)), ' deg'])
 
 %% Example 2: video of multiple images (gastrocnemius lateralis, jumping)
 % images in .png format
-cd([mainfolder,'Example images\raw\TimTrack paper\dataset 2\jumping'])
+if ismac
+    cd([mainfolder,'Example images/raw/TimTrack paper/dataset 2/jumping'])
+elseif ispc
+    cd([mainfolder,'Example images\raw\TimTrack paper\dataset 2\jumping'])
+end
 files = dir('*png');
 
 % load manual estimates and pixel-to-centimeter ratio
@@ -80,7 +87,12 @@ title('Gastrocnemius lateralis during a jump')
 
 %% Example 3: video of multiple images (gastrocnemius lateralis, range-of-motion)
 % images in .png format
-cd([mainfolder,'Example images\raw\TimTrack paper\dataset 2\range-of-motion'])
+if ismac
+        cd([mainfolder,'Example images/raw/TimTrack paper/dataset 2/range-of-motion'])
+elseif ispc
+        cd([mainfolder,'Example images\raw\TimTrack paper\dataset 2\range-of-motion'])
+end
+
 files = dir('*png');
 
 % load manual estimates and pixel-to-centimeter ratio
