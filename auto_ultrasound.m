@@ -72,6 +72,8 @@ if parms.extrapolation
     
     parms.apo.x = round(fzero(@(x) polyval(deep_coef_lin(:)-fas_coef(:),x),0));
     
+else
+    fas_coef = [];
 end
 
 % extract variables
@@ -109,6 +111,10 @@ geofeatures.ws = ws;
 geofeatures.brightness = image_brightness;
 geofeatures.extrapolated_fraction = extrapolated_fraction;
 geofeatures.analysis_duration = toc(s);
+
+geofeatures.super_coef = super_coef;
+geofeatures.deep_coef = deep_coef;
+geofeatures.fas_coef = fas_coef;
 
 apovecs.super_aponeurosis_vector = super_aponeurosis_vector;
 apovecs.deep_aponeurosis_vector = deep_aponeurosis_vector;
