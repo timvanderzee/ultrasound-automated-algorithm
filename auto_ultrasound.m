@@ -54,7 +54,7 @@ deep_coef = fit_apo(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_apone
 
 % linear versions
 super_coef_lin = fit_apo(parms.apo.apox(isfinite(super_aponeurosis_vector)),super_aponeurosis_vector(isfinite(super_aponeurosis_vector)),parms.apo.super, 1);
-deep_coef_lin = fit_apo(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_aponeurosis_vector(isfinite(deep_aponeurosis_vector)),parms.apo.super, 1);
+deep_coef_lin = fit_apo(parms.apo.apox(isfinite(deep_aponeurosis_vector)),deep_aponeurosis_vector(isfinite(deep_aponeurosis_vector)),parms.apo.deep, 1);
 
 % don't allow positive first coefficients
 % if deep_coef(1) > 0, deep_coef = deep_coef_lin;
