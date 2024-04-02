@@ -1,4 +1,4 @@
-function[alphas, w] = dohough(fascicle,parms)
+function[alphas, w, h] = dohough(fascicle,parms)
 
 % This function finds the muscle fascicle angle (alpha) 
 % given the filtered image (fascicle) and parameters (parms)
@@ -53,6 +53,9 @@ r_ellipse_rel = re(1) ./ sqrt(re(1)^2*cosd(gamma).^2 + re(2)^2*sind(gamma).^2);
 
 % correct for relative radius
 hmat_cor = round(hmat ./ repmat(r_ellipse_rel, size(hmat,1),1));
+
+% maximal vote at each angle
+h = max(hmat_cor);
 
 % determine peaks
 P = houghpeaks(hmat_cor, parms.npeaks,'Threshold',0);

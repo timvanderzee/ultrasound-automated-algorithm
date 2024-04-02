@@ -44,7 +44,7 @@ end
 fascicle_masked = fascicle .* parms.fas.Emask;
 
 % Hough transform
-[alphas,ws] = dohough(fascicle_masked, parms.fas);
+[alphas,ws, hs] = dohough(fascicle_masked, parms.fas);
 alpha = weightedMedian(alphas,ws);
 
 %% Step 3: Variables extraction
@@ -73,8 +73,6 @@ if parms.extrapolation
     cost = @(x, super_coef_lin, deep_coef_lin, fas_coef) max([(Mx - (x-deep_coef_lin(2)) / (deep_coef_lin(1)-fas_coef(1))).^2  (Mx - (x-super_coef_lin(2)) / (super_coef_lin(1)-fas_coef(1))).^2]);
     
     fas_coef(2) = fminsearch(@(x) cost(x, super_coef_lin, deep_coef_lin, fas_coef), My - Mx * fas_coef(1));
-    
-%     parms.apo.x = round(fzero(@(x) polyval(deep_coef_lin(:)-fas_coef(:),x),0));
 
     parms.apo.x = (fas_coef(2) -deep_coef_lin(2)) / (deep_coef_lin(1)-fas_coef(1));
     
@@ -114,6 +112,7 @@ geofeatures.alpha = alpha;
 geofeatures.phi = alpha-betha;
 geofeatures.fat_thickness = fat_thickness;
 geofeatures.ws = ws;
+geofeatures.hs = hs;
 geofeatures.brightness = image_brightness;
 geofeatures.extrapolated_fraction = extrapolated_fraction;
 geofeatures.analysis_duration = toc(s);
