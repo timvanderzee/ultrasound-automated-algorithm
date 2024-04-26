@@ -1,4 +1,4 @@
-function[alphas, w, h] = dohough(fascicle,parms)
+function[alphas, w, h, y, x] = dohough(fascicle,parms)
 
 % This function finds the muscle fascicle angle (alpha) 
 % given the filtered image (fascicle) and parameters (parms)
@@ -68,6 +68,9 @@ end
 
 alphas = gamma(P(:,2));
 % alpha = weightedMedian(alphas,w);
+
+%% See which pixels contribute for determining ROI
+[y,x] = find(hough_bin_pixels(fascicle, theta, rho, P(i,:)));
 
 %% Optional figure: see which pixels contribute
 N = size(P,1) ;

@@ -44,7 +44,7 @@ end
 fascicle_masked = fascicle .* parms.fas.Emask;
 
 % Hough transform
-[alphas,ws, hs] = dohough(fascicle_masked, parms.fas);
+[alphas,ws, hs,y,x] = dohough(fascicle_masked, parms.fas);
 alpha = weightedMedian(alphas,ws);
 
 %% Step 3: Variables extraction
@@ -124,5 +124,7 @@ geofeatures.fas_coef = fas_coef;
 apovecs.super_aponeurosis_vector = super_aponeurosis_vector;
 apovecs.deep_aponeurosis_vector = deep_aponeurosis_vector;
 
+geofeatures.y = y;
+geofeatures.x = x;
 
 end
