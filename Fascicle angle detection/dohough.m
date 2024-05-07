@@ -1,4 +1,4 @@
-function[alphas, w, h, y, x] = dohough(fascicle,parms)
+function[alphas, w, h, Y, X] = dohough(fascicle,parms)
 
 % This function finds the muscle fascicle angle (alpha) 
 % given the filtered image (fascicle) and parameters (parms)
@@ -70,17 +70,25 @@ alphas = gamma(P(:,2));
 % alpha = weightedMedian(alphas,w);
 
 %% See which pixels contribute for determining ROI
-[y,x] = find(hough_bin_pixels(fascicle, theta, rho, P(i,:)));
+N = size(P,1);    
+X = nan(length(P,2));
+Y = nan(length(P,2));
+
+for i = 1:N 
+    [y,x] = find(hough_bin_pixels(fascicle, theta, rho, P(i,:)));
+    X(i,:) = [x(1) x(end)];
+    Y(i,:) = [y(1) y(end)];
+end
 
 %% Optional figure: see which pixels contribute
-N = size(P,1) ;
+
 if parms.show
     % Most dominant line is green, least dominant is blue, intermediate are in between green and blue 
     colors = [ones(N,1) linspace(0,1,N)', linspace(0,1,N)'];
     
     for i = 1:N 
-        [y,x] = find(hough_bin_pixels(fascicle, theta, rho, P(i,:)));
-        line('xdata',x,'ydata',y ,'linestyle','none','marker','.', 'color',colors(i,:));
+%         [y,x] = find(hough_bin_pixels(fascicle, theta, rho, P(i,:)));
+        line('xdata',X(i,:),'ydata',Y(i,:) ,'linestyle','-', 'color',colors(i,:));
     end
 end
 
