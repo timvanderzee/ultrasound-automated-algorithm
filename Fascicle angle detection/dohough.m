@@ -71,8 +71,8 @@ alphas = gamma(P(:,2));
 
 %% See which pixels contribute for determining ROI
 N = size(P,1);    
-X = nan(length(P,2));
-Y = nan(length(P,2));
+X = nan(size(P,1),2);
+Y = nan(size(P,1),2);
 
 for i = 1:N 
     [y,x] = find(hough_bin_pixels(fascicle, theta, rho, P(i,:)));
