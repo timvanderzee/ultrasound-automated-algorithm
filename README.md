@@ -46,8 +46,8 @@ Here is an example of such a GIF:
 Several example images are included in the "example images" folder.
 
 ## Open Source License
-All TimTrack software is available under the CC0-1.0 License (see License file). Images from [Drazan's repository](https://zenodo.org/record/2598553#.Ygvcrt_MJD8)
- and [Seyness's repository](https://data.mendeley.com/datasets/dpmf9bz8pt/2) (here referred to as dataset 3 and 4 respectively) are availabe under Creative Commons Attribution 4.0 International License. All other images are available under CC0-1.0 License (see License file). 
+All TimTrack software is available under the CC0-1.0 License (see License file). Images from [Drazan et al. repository](https://zenodo.org/record/2598553#.Ygvcrt_MJD8)
+ and [Seynnes & Cronin repository](https://data.mendeley.com/datasets/dpmf9bz8pt/2) (here referred to as dataset 3 and 4 respectively) are availabe under Creative Commons Attribution 4.0 International License. All other images are available under CC0-1.0 License (see License file). 
 
 ## Contact
 The code has been tested for MATLAB versions 2016a and 2020a. I aim to make it compatible with other versions as well in the future. Please let me know if you run into issues with your MATLAB version and I can make adjustments. 
