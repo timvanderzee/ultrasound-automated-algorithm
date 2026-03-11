@@ -126,7 +126,6 @@ function[apoy] = get_apo_line(apo_thres, apox, type)
     Rho = rho(P(1)); Theta = theta(P(2));
 
     yi = round((Rho-apox * cosd(Theta)) ./ sind(Theta));
-    yi(yi<1) = 1;
         
     % if horizontal, need to rotate these points back
     if Theta == -90
@@ -151,6 +150,9 @@ function[apoy] = get_apo_line(apo_thres, apox, type)
 
     apo_thres = imfill(apo_thres, 'holes');
     apoy = nan(size(apox));
+
+    yi(yi<1) = 1;
+    yi(yi>size(apo_thres,1)) = size(apo_thres,1);
         
     if strcmp(type, 'super')
         % if interpolate pixel is white, go and seek the first black pixel
