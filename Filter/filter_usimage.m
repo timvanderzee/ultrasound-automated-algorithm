@@ -126,6 +126,7 @@ function[apoy] = get_apo_line(apo_thres, apox, type)
     Rho = rho(P(1)); Theta = theta(P(2));
 
     yi = round((Rho-apox * cosd(Theta)) ./ sind(Theta));
+    yi(yi<1) = 1;
         
     % if horizontal, need to rotate these points back
     if Theta == -90
