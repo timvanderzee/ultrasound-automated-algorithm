@@ -3,8 +3,7 @@
 This respository contains MATLAB-based code that can be used to estimate muscle fascicle length, muscle thickness and pennation angle from muscle ultrasound images. 
 The so-called TimTrack-algorithm uses a combination of image filtering to highlight line-like structures and line-detection procedures to obtain the overall fascicle orientation.
 
-This algorithm is described in more detail in our [bioRxiv pre-print](https://www.biorxiv.org/content/10.1101/2020.08.23.263574v2) 
-and has been used to estimate the mechanical work done by muscle fascicles during cyclic contraction in a [peer-reviewed study](https://journals.biologists.com/jeb/article-abstract/224/9/jeb233965/237823/The-high-energetic-cost-of-rapid-force-development?redirectedFrom=fulltext).
+This algorithm is described in more detail in [van der Zee & Kuo (2022)](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0265752), published in PLOS One.
 
 ## Overview
 The main function is called **auto_ultrasound.m**, which may be called directly, or indirectly through calling **do_TimTrack.m**. Both these functions need two inputs: (1) the ultrasound image and (2) algorithm parameters (*parms*). 
@@ -52,4 +51,4 @@ All TimTrack software is available under the CC0-1.0 License (see License file).
 ## Contact
 The code has been tested for MATLAB versions 2016a and 2020a. I aim to make it compatible with other versions as well in the future. Please let me know if you run into issues with your MATLAB version and I can make adjustments. 
 
-For questions, please email me: tim.vanderzee@ucalgary.ca
+For questions, please email me: tim.vanderzee@kuleuven.be
