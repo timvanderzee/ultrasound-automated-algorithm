@@ -1,4 +1,4 @@
-function [outIm,whatScale,Direction] = FrangiFilter2D(I, options)
+function [outIm,whatScale] = FrangiFilter2D(I, options)
 % This function FRANGIFILTER2D uses the eigenvectors of the Hessian to
 % compute the likeliness of an image region to vessels, according
 % to the method described by Frangi:2001 (Chapter 2).
@@ -73,10 +73,10 @@ for i = 1:length(sigmas),
     Dyy = (sigmas(i)^2)*Dyy;
    
     % Calculate (abs sorted) eigenvalues and vectors
-    [Lambda2,Lambda1,Ix,Iy]=eig2image(Dxx,Dxy,Dyy);
+    [Lambda2,Lambda1]=eig2image(Dxx,Dxy,Dyy);
 
     % Compute the direction of the minor eigenvector
-    angles = atan2(Ix,Iy);
+%     angles = atan2(Ix,Iy);
 
     % Compute some similarity measures
     Lambda1(Lambda1==0) = eps;
@@ -94,7 +94,7 @@ for i = 1:length(sigmas),
     end
     % store the results in 3D matrices
     ALLfiltered(:,:,i) = Ifiltered;
-    ALLangles(:,:,i) = angles;
+%     ALLangles(:,:,i) = angles;
 end
 
 % Return for every pixel the value of the scale(sigma) with the maximum 
@@ -105,15 +105,15 @@ if length(sigmas) > 1,
     if(nargout>1)
         whatScale = reshape(whatScale,size(I));
     end
-    if(nargout>2)
-        Direction = reshape(ALLangles((1:numel(I))'+(whatScale(:)-1)*numel(I)),size(I));
-    end
+%     if(nargout>2)
+%         Direction = reshape(ALLangles((1:numel(I))'+(whatScale(:)-1)*numel(I)),size(I));
+%     end
 else
     outIm = reshape(ALLfiltered,size(I));
     if(nargout>1)
             whatScale = ones(size(I));
     end
-    if(nargout>2)
-        Direction = reshape(ALLangles,size(I));
-    end
+%     if(nargout>2)
+%         Direction = reshape(ALLangles,size(I));
+%     end
 end
